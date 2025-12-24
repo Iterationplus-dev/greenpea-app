@@ -1,0 +1,327 @@
+/* @import "tailwindcss/preflight"; */
+/* @tailwind utilities; */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
+
+@layer components {
+    .fi-sidebar {
+        background-color: #ffffff !important;
+    }
+
+
+    .fi-btn.fi-color-primary {
+        /* Use !important sparingly, but it may be necessary here */
+        color: #ffffff !important;
+        /* Force text color to black */
+    }
+
+    .fi-btn.fi-color-primary:hover {
+        color: #ffffff !important;
+        /* Force text color to black on hover */
+    }
+
+
+    /* Login page */
+    .fi-simple-main {
+        max-width: 500px !important;
+        /* Default max-width */
+    }
+
+    /* You might need to adjust for different breakpoints */
+    @media (min-width: 768px) {
+
+        /* md breakpoint */
+        .fi-simple-main {
+            max-width: 400px;
+        }
+    }
+
+
+    /* Table rows height */
+
+    /* 1. Target the main table cell (<td>) element */
+    .fi-ta-cell {
+        padding-top: 0.1rem !important;
+        padding-bottom: 0.1rem !important;
+    }
+
+    /* 2. Target the table header cell (<th>) for consistency */
+    .fi-ta-header-cell {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        font-size: 0.95rem !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    /* 3. Reduce padding on the checkbox/bulk-action column */
+    /* The selection cell often has its own padding structure */
+    .fi-ta-cell.fi-ta-selection-cell {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+    }
+
+    .fi-ta-text:not(.fi-inline) {
+        padding-inline: 2px;
+    }
+
+    .fi-ta-text-item.fi-size-sm {
+        font-size: 0.875rem !important;
+        line-height: 0.1rem !important;
+        --tw-leading: 0.1rem !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    }
+
+    .custom-padding-right-column {
+        /* Set padding-right to 1.5rem (pr-6 equivalent) and force it */
+        padding-right: 2.2rem !important;
+    }
+
+    .custom-padding-left-column {
+        padding-left: 0.75rem !important;
+    }
+
+    .fi-ta-image:not(.fi-inline) {
+        padding-inline: calc(var(--spacing) * 1.5);
+        padding-block: calc(var(--spacing) * 1.5);
+    }
+
+    .fi-ta-image {
+        align-items: center;
+        width: 100%;
+        display: flex;
+        /* padding: 1px; */
+        margin: 0;
+    }
+
+    /* ToggleColumn */
+    .fi-toggle {
+        width: 2.75rem !important;
+        height: 1.45rem !important;
+    }
+
+    /* Target the internal switch track */
+    .fi-toggle .fi-toggle-track {
+        width: 0.95rem !important;
+        height: 0.75rem !important;
+        min-width: 0.35rem !important;
+        min-height: 0.35rem !important;
+    }
+
+    /* Target the internal thumb (the moving circle) */
+    .fi-toggle .fi-toggle-thumb {
+        /* Adjust thumb size relative to the new height */
+        width: 0.5px !important;
+        height: 0.5px !important;
+    }
+
+    .fi-ta-toggle.fi-align-center {
+        text-align: center;
+        padding-top: 0.5rem;
+        padding-bottom: 0;
+    }
+
+
+
+    /* heading */
+    .fi-header-heading {
+        font-size: 1.3rem !important;
+        line-height: 1.3rem !important;
+        font-family: 'Roboto', sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    @media (min-width: 640px) {
+        .fi-header-heading {
+            font-size: 0.5rem;
+            /* text-2xl */
+            line-height: 0.5rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .fi-header-heading {
+            font-size: 0.875rem;
+            /* text-3xl */
+            line-height: 0.875rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .fi-header-heading {
+            font-size: 1.5rem;
+            /* text-4xl */
+            line-height: 1.5rem;
+        }
+    }
+
+    /* input border */
+    /* Target the input element within Filament's text input component */
+    .fi-fo-text-input input {
+        border-width: 1.8px !important;
+        border-style: dotted !important;
+        border-color: #1dffa1 !important;
+        /*Lightgray*/
+        border-radius: 6px !important;
+        /*Roundedcorners*/
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+        -webkit-border-radius: 6px !important;
+    }
+
+    /* select */
+    /* In your custom CSS file */
+    .choices__inner,
+    .choices {
+        /* Remove outline/focus ring if needed */
+        /* outline: none !important;*/
+        border-width: 1.8px !important;
+        border-style: dotted !important;
+        border-color: #ac1dff !important;
+    }
+
+    .fi-select-input .fi-select-input-value-ctn {
+        text-wrap: wrap;
+        word-break: break-word;
+        align-items: center;
+        width: 100%;
+        display: flex;
+        /*outline-style: solid;
+        border-color: #eb1b1b !important;
+        outline-color: #eb1b1b;
+        */
+        background-color: #fcfcfc !important;
+        border-radius: 6px !important;
+        padding-left: 5px;
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+    }
+
+    .fi-select-input {
+        outline-style: dotted;
+        border-color: #1dffa1 !important;
+        outline-color: #1dffa1;
+        border-radius: 6px !important;
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+    }
+
+
+    .custom-table-font {
+        /* Apply your desired font family */
+        font-family: 'Times New Roman', Times, serif !important;
+    }
+
+    .monospace-font-column {
+        /* Apply the desired font family */
+        font-family: Consolas, 'Courier New', monospace !important;
+    }
+
+
+    /* RichEditor */
+
+    /* Target the RichEditor's wrapper */
+    .custom-rich-editor {
+        /* Set a minimum height on the entire component */
+        min-height: 125px;
+    }
+
+    /* Target the actual TipTap content area inside the editor */
+    .custom-rich-editor .ProseMirror {
+        /* Set a minimum height for the editable content area */
+        min-height: 50px;
+
+        /* Set a max height with scrollbar */
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .filament-sidebar-group-label::before {
+        content: attr(data-label);
+    }
+
+    .text-white {
+        color: #ffffff;
+    }
+
+    .widget-text-lg {
+        font-size: 16px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: 700;
+    }
+
+    .widget-text-sm {
+        font-size: 14px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: 400;
+    }
+
+    .widget-text-xs {
+        font-size: 12px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-weight: 200;
+    }
+
+    /*  */
+    .fi-wi-stats-overview-stat-value {
+        color: #0c0c0c !important;
+        /* Example: Bright Blue */
+        font-weight: 600 !important;
+        font-size: 21px !important;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    @media (max-width: 768px) {
+        .fi-wi-stats-overview-stat-value {
+            /* Smaller on mobile */
+            color: #0c0c0c !important;
+            /* Example: Bright Blue */
+            font-weight: 600 !important;
+            font-size: 18px !important;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+    }
+
+    .fi-wi-stats-overview-stat-description {
+        font-size: 12px !important;
+        /* Smaller font size */
+    }
+
+    /* You can also add responsive rules for the description */
+    @media (max-width: 768px) {
+        .fi-wi-stats-overview-stat-description {
+            font-size: 10px !important;
+            /* Even smaller on mobile */
+        }
+    }
+
+
+    .fi-ta-color:not(.fi-inline) {
+        padding-inline: calc(var(--spacing) * 3);
+        padding-block: calc(var(--spacing) * 1);
+    }
+
+
+    h1.fi-simple-header-heading {
+        text-align: center;
+        font-size: 1.35rem;
+        line-height: 3.5rem;
+        font-family: 'Roboto';
+        font-weight: 600;
+    }
+
+    .fi-brand-name {
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+    }
+
+}
