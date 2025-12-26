@@ -312,7 +312,7 @@
 
     h1.fi-simple-header-heading {
         text-align: center;
-        font-size: 1.35rem;
+        font-size: 1.25rem;
         line-height: 3.5rem;
         font-family: 'Roboto';
         font-weight: 600;
@@ -322,6 +322,18 @@
         font-weight: 700;
         font-size: 0.8rem;
         letter-spacing: 0.03em;
+    }
+
+    /* table badge */
+    .fi-ta-text-item {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        padding: 0.35rem !important;
+    }
+
+    /* table icon */
+    .fi-ta-icon:not(.fi-inline) {
+        padding-inline: calc(.25rem * 3);
+        padding-block: calc(var(--spacing) * 1);
     }
 
 }

@@ -25,7 +25,10 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
+            // 'role' => fake()->randomElement(array_column(\App\Enums\UserRole::cases(), 'value')),
+            'status' => fake()->randomElement(array_column(\App\Enums\UserStatus::cases(), 'value')),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

@@ -5,9 +5,6 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
-use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -19,6 +16,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use Filament\Support\Colors\Color;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -37,7 +35,7 @@ class AppPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/app/theme.css')
             ->brandName('GreenPea')
             ->brandLogo(asset('img/greenpea-favicon.png'))
-            ->brandLogoHeight('3.5rem')
+            ->brandLogoHeight('3rem')
             ->favicon(asset('img/greenpea-favicon.png'))
             ->font('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
@@ -45,6 +43,11 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
+            ->sidebarWidth('16rem')
+            ->sidebarCollapsibleOnDesktop(false)
+            ->collapsedSidebarWidth('9rem')
+            ->topNavigation(false)
+            ->topBar(true)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 // AccountWidget::class,
@@ -58,7 +61,7 @@ class AppPanelProvider extends PanelProvider
                     ->formPanelWidth('40%')
                     // ->formPanelBackgroundColor(Color::White, '300')
                     // ->formPanelBackgroundColor(Color::hex('#ffffff'))
-                    ->emptyPanelBackgroundImageUrl('https://res.cloudinary.com/dney6qnzd/image/upload/v1722059138/seminar-bg_tyc3gc.jpg')
+                    ->emptyPanelBackgroundImageUrl('https://res.cloudinary.com/dney6qnzd/image/upload/v1766563654/hotel-apartments-view-edited_axyf9u.jpg')
                     ->emptyPanelBackgroundImageOpacity('90%')
                     ->emptyPanelBackgroundColor(Color::Green, '300')
             ])

@@ -6,15 +6,18 @@ namespace App\Models;
 
 use Filament\Panel;
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Testing\Fluent\Concerns\Has;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +27,7 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'role',
     ];
@@ -53,16 +57,34 @@ class User extends Authenticatable implements FilamentUser
 
     protected $casts = [
         'role' => UserRole::class,
+        'status' => UserStatus::class,
     ];
 
+    /*ROLE HELPERS*/
     public function isSuperAdmin(): bool
     {
         return $this->role === UserRole::SUPER_ADMIN;
     }
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN;
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->role === UserRole::PROPERTY_OWNER;
+    }
 
     public function hasRole(UserRole|string $role): bool
     {
-        return $this->role === $role;
+        // return $this->role === $role;
+        return $this->role === $role || $this->role?->value === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        // return in_array($this->role?->value, $roles, true);
+        return in_array($this->role->value ?? $this->role, $roles, true);
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -71,5 +93,26 @@ class User extends Authenticatable implements FilamentUser
             UserRole::SUPER_ADMIN,
             UserRole::SUPPORT,
         ], true);
+    }
+
+
+
+    /* RELATIONSHIPS */
+
+    // Owner → Properties
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'owner_id');
+    }
+    // Guest → Bookings
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    // Owner → Earnings
+    public function ownerEarnings()
+    {
+        return $this->hasMany(OwnerEarning::class, 'owner_id');
     }
 }

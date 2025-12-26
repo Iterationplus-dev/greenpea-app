@@ -14,7 +14,8 @@ class PropertyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        // return true;
+        return $user->can('properties.view');
     }
 
     /**
@@ -22,7 +23,14 @@ class PropertyPolicy
      */
     public function view(User $user, Property $property): bool
     {
-        return false;
+        // return $user->isAdmin() || $property->owner_id === $user->id;
+        // return $user->hasRole(UserRole::SUPER_ADMIN)
+        //     || $property->owner_id === $user->id;
+
+            return $user->hasAnyRole([UserRole::ADMIN->value, UserRole::SUPER_ADMIN->value])|| $property->owner_id === $user->id;
+            // return $user->hasRole('super_admin')
+            //     || ($user->can('properties.view') && $property->owner_id === $user->id);
+            // return true;
     }
 
     /**
@@ -34,6 +42,7 @@ class PropertyPolicy
             UserRole::SUPER_ADMIN,
             UserRole::PROPERTY_OWNER,
         ], true);
+        // return $user->can('properties.create');
     }
 
     /**
@@ -41,7 +50,10 @@ class PropertyPolicy
      */
     public function update(User $user, Property $property): bool
     {
-        return $user->isSuperAdmin() || $property->user_id === $user->id;
+        // return $user->isSuperAdmin() || $property->user_id === $user->id;
+        // return $this->view($user, $property);
+        return $user->hasRole('admin')
+            || ($user->can('properties.update') && $property->owner_id === $user->id);
     }
 
     /**
@@ -49,7 +61,8 @@ class PropertyPolicy
      */
     public function delete(User $user, Property $property): bool
     {
-        return $user->isSuperAdmin();
+        // return $user->isSuperAdmin();
+        return $user->hasRole('admin');
     }
 
     /**

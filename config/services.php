@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    //
+    'whatsapp' => [
+        'enabled' => env('WHATSAPP_ENABLED', false),
+        'endpoint' => env('WHATSAPP_ENDPOINT'),
+        'token' => env('WHATSAPP_TOKEN'),
+    ],
+
+    'cloudinary' => [
+        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+    ],
+
 ];

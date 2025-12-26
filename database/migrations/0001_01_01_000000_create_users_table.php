@@ -1,8 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -15,8 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', array_column(UserRole::cases(), 'value'))
+                ->default(UserRole::GUEST->value);
+            $table->enum('status', array_column(UserStatus::cases(), 'value'))
+                ->default(UserStatus::ACTIVE->value);
             $table->rememberToken();
             $table->timestamps();
         });
