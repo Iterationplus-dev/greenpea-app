@@ -30,6 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'phone',
         'password',
         'role',
+        'status',
     ];
 
     /**
@@ -52,13 +53,15 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'status' => UserStatus::class,
         ];
     }
 
-    protected $casts = [
-        'role' => UserRole::class,
-        'status' => UserStatus::class,
-    ];
+    // protected $casts = [
+    //     'role' => UserRole::class,
+    //     'status' => UserStatus::class,
+    // ];
 
     /*ROLE HELPERS*/
     public function isSuperAdmin(): bool

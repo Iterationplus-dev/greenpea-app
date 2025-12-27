@@ -20,8 +20,7 @@ class UsersTable
         return $table
             ->striped()
             ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(fn(Builder $query) => $query
-                ->orderBy('created_at', 'asc'))
+            ->modifyQueryUsing(fn(Builder $query) => $query)
             ->emptyStateIcon('heroicon-o-users')
             ->emptyStateHeading('No users found!')
             ->emptyStateDescription('You don\'t have users yet. Click the button to add a user.')
@@ -33,50 +32,22 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')
                     ->label('Full Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('email')
                     ->label('Email address')
-                    ->searchable(),
+                    ->searchable()
+                    ->visibleFrom('sm')
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('role')
                     ->label('Role')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('phone')
                     ->label('Phone')
-                    ->searchable(),
-
-                // IconColumn::make('status')
-                //     ->boolean()
-                //     ->label('Status')
-                //     ->sortable(),
-
-                // TextColumn::make('status')
-                //     ->label('Status')
-                //     ->searchable()
-                //     ->sortable()
-                //     ->visibleFrom('md')
-                //     ->badge()
-                //     //state => color
-                //     ->colors([
-                //         UserStatus::ACTIVE->value => 'success',
-                //         UserStatus::INACTIVE->value => 'gray',
-                //         UserStatus::SUSPENDED->value => 'warning',
-                //         UserStatus::BANNED->value => 'danger',
-                //     ])
-                //     //state => icon (valid heroicons)
-                //     ->icons([
-                //         UserStatus::ACTIVE->value => 'heroicon-o-check-circle',
-                //         UserStatus::INACTIVE->value => 'heroicon-o-pause-circle',
-                //         UserStatus::SUSPENDED->value => 'heroicon-o-exclamation-circle',
-                //         UserStatus::BANNED->value => 'heroicon-o-x-circle',
-                //     ])
-
-                //     //Enum-safe formatting
-                //     ->formatStateUsing(fn(UserStatus $state) => ucfirst($state->value)),
-
-                // ToggleColumn::make('status')
-                //     ->onColor('success')
-                //     ->offColor('danger'),
+                    ->searchable()
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -97,9 +68,10 @@ class UsersTable
                         UserStatus::BANNED => 'heroicon-o-no-symbol',
                         default => null,
                     })
-                    ->formatStateUsing(fn(UserStatus $state) => ucfirst($state->value)),
+                    ->formatStateUsing(fn(UserStatus $state) => ucfirst($state->value))
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
 
-
+                // Actions column removed; use recordActions for row actions
             ])
             ->filters([
                 //
@@ -113,8 +85,15 @@ class UsersTable
                     )
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->icon('heroicon-o-pencil-square')
+                    ->label('Edit')
+                    ->tooltip('Edit this record')
+                    ->modalHeading('Edit User'),
+
             ])
+            ->recordActionsColumnLabel('Actions')
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
