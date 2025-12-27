@@ -55,6 +55,7 @@ class UserForm
                             // ))
                             ->options(
                                 collect(UserRole::cases())
+                                    ->reject(fn(UserRole $role) => in_array($role->value, ['super_admin', 'admin',]))
                                     ->mapWithKeys(fn($role) => [
                                         $role->value => ucfirst(str_replace('_', ' ', strtolower($role->value))),
                                     ])

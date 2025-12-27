@@ -16,6 +16,7 @@ class PropertyForm
         return $schema
             ->components([
                 Section::make('Property Information')
+                    ->description('Basic details about the property')
                     ->schema([
                         TextInput::make('Property name')
                             ->required()
@@ -30,7 +31,7 @@ class PropertyForm
                             ->searchable()
                             ->preload()
                             ->required(),
-                    ]),
+                    ])->columnSpanFull(),
 
                 Section::make('Property Information')
                     ->schema([
@@ -47,9 +48,9 @@ class PropertyForm
                         Hidden::make('owner_id')
                             ->default(fn() => auth()->id())
                             ->visible(fn() => auth()->user()->isAdmin() === false),
-                    ]),
+                    ])->columnSpanFull(),
                 Section::make('Description')
-                    ->schema([]),
+                    ->schema([])->columnSpanFull(),
 
 
 

@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Models\User;
+use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Actions\EditAction;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -40,9 +44,38 @@ class UsersTable
                     ->visibleFrom('sm')
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('role')
+
                     ->label('Role')
                     ->searchable()
                     ->sortable()
+                    // ->formatStateUsing(fn(UserRole $state) => ucfirst($state->value))
+                    ->formatStateUsing(fn(UserRole $state) => Str::headline($state->value))
+                    // ->formatStateUsing(fn($state) => Str::headline($state))
+                    ->badge()
+                    ->color(fn(UserRole $state) => match ($state) {
+                        UserRole::SUPER_ADMIN => 'success',
+                        UserRole::ADMIN => 'primary',
+                        UserRole::PROPERTY_OWNER => 'warning',
+                        UserRole::AGENT => 'danger',
+                        UserRole::MANAGER => 'secondary',
+                        UserRole::GUEST => 'info',
+                        UserRole::CUSTOMER => 'info',
+                        default => 'gray',
+                    })
+                    ->icon(fn(UserRole $state) => match ($state) {
+                        UserRole::SUPER_ADMIN => 'heroicon-o-lock-closed',
+                        UserRole::ADMIN => 'heroicon-o-lock-open',
+                        UserRole::PROPERTY_OWNER => 'heroicon-o-building-storefront',
+                        UserRole::AGENT => 'heroicon-o-megaphone',
+                        UserRole::GUEST => 'heroicon-o-briefcase',
+                        UserRole::CUSTOMER => 'heroicon-o-briefcase',
+                        UserRole::MANAGER => 'heroicon-o-cog',
+                        UserRole::MARKETER => 'heroicon-o-megaphone',
+                        UserRole::DEVELOPER => 'heroicon-o-building-office-2',
+                        UserRole::STAFF => 'heroicon-o-pencil-square',
+                        UserRole::ACCOUNTANT => 'heroicon-o-book-open',
+                        default => null,
+                    })
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('phone')
                     ->label('Phone')
@@ -90,6 +123,8 @@ class UsersTable
                     ->label('Edit')
                     ->tooltip('Edit this record')
                     ->modalHeading('Edit User'),
+                DeleteAction::make()
+                    ->visible(fn(User $record) => $record->id !== auth()->id()),
 
             ])
             ->recordActionsColumnLabel('Actions')
