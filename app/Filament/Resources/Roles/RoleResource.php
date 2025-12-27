@@ -26,6 +26,8 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Role';
 
+      protected static ?int $navigationSort = 3;
+
     public static function canAccess(): bool
     {
         return auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]);

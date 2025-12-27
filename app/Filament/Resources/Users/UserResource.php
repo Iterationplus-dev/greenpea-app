@@ -23,7 +23,7 @@ class UserResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
     protected static string | UnitEnum | null $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Manage Users';
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'User';
 
     public static function canAccess(): bool

@@ -24,7 +24,7 @@ class PropertyResource extends Resource
     // protected static ?string $navigationGroup = 'Properties';
     protected static string | UnitEnum | null $navigationGroup = 'Properties';
     protected static ?string $navigationLabel = 'Manage Properties';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'property';
 

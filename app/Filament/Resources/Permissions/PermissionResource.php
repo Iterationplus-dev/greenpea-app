@@ -25,6 +25,8 @@ protected static string | UnitEnum | null $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Manage Permissions';
     protected static ?string $recordTitleAttribute = 'Permission';
 
+      protected static ?int $navigationSort = 3;
+
      public static function canAccess(): bool
     {
         return auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]);

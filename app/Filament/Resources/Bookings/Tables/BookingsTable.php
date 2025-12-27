@@ -2,24 +2,106 @@
 
 namespace App\Filament\Resources\Bookings\Tables;
 
+use App\Models\Booking;
+use Filament\Tables\Table;
+use App\Enums\BookingStatus;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Tables\Table;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookingsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->striped()
+            ->defaultSort('name', 'asc')
+            ->modifyQueryUsing(fn(Builder $query) => $query)
+            ->emptyStateIcon('heroicon-o-calendar-days')
+            ->emptyStateHeading('No bookings found!')
+            ->emptyStateDescription('You don\'t have bookings yet. Click the button to add a booking.')
+            ->emptyStateActions([
+                CreateAction::make(),
+            ])
+            ->paginatedWhileReordering()
+            ->deferLoading()
             ->columns([
-                //
+                TextColumn::make('reference')
+                    ->searchable()
+                    ->label('Reference')
+                    ->weight(FontWeight::Bold)
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
+                TextColumn::make('guest_name')
+                    ->searchable()
+                    ->label('Guest')
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
+                TextColumn::make('apartment.name')
+                    ->label('Apartment')
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
+                TextColumn::make('amount')->money('NGN')
+                    ->alignRight()
+                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(BookingStatus $state) => match ($state) {
+                        BookingStatus::APPROVED => "success",
+                        BookingStatus::PENDING => "warning",
+                        BookingStatus::CANCELLED => "danger",
+                        BookingStatus::REFUNDED => "info",
+                        default => 'gray',
+                    })
+                    ->icon(fn(BookingStatus $state) => match ($state) {
+                        BookingStatus::APPROVED => 'heroicon-o-check-circle',
+                        BookingStatus::PENDING => 'heroicon-o-arrow-path',
+                        BookingStatus::REFUNDED => 'heroicon-o-arrow-uturn-left',
+                        BookingStatus::CANCELLED => 'heroicon-o-times',
+                        default => null,
+                    }),
+                TextColumn::make('created_at')
+                    ->date()
+                    ->label('Date'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                // EditAction::make(),
+                /* APPROVE */
+                Action::make('approve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(
+                        fn(Booking $record) =>
+                        $record->status === 'pending'
+                            && auth()->user()->can('bookings.approve')
+                    )
+                    ->action(fn(Booking $record) => $record->approve()),
+
+                /* REFUND */
+                Action::make('refund')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('danger')
+                    ->visible(
+                        fn(Booking $record) =>
+                        $record->status === 'approved'
+                            && auth()->user()->can('bookings.refund')
+                    )
+                    ->requiresConfirmation()
+                    ->action(fn(Booking $record) => $record->refund()),
+
+                /* DOWNLOAD INVOICE */
+                Action::make('invoice')
+                    ->label('Invoice')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->url(fn(Booking $record) => $record->invoice?->pdf_url)
+                    ->openUrlInNewTab()
+                    ->visible(fn(Booking $record) => $record->invoice !== null),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

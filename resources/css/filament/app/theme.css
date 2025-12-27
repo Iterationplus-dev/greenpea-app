@@ -331,8 +331,8 @@
 
     /* table badge */
     .fi-ta-text-item {
-        padding: 0.475rem !important;
-        margin: 0rem !important;
+        margin: 0 !important;
+        padding: .775rem !important;
     }
 
     .fi-badge {

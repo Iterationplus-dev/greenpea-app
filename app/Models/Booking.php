@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\OwnerScope;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Scopes\OwnerScope;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Booking extends Model
 {
     //
+    use LogsActivity;
+    // protected static $logName = 'booking';
+    // protected static $logAttributes = ['status', 'amount'];
     protected $table = 'bookings';
     protected $fillable = [
         'user_id',
@@ -22,6 +27,19 @@ class Booking extends Model
         'status',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'status',
+                'amount',
+                'start_date',
+                'end_date',
+            ])
+            ->logOnlyDirty()
+            ->useLogName('booking');
+    }
+
 
     protected $casts = [
         'start_date' => 'date',
@@ -32,6 +50,8 @@ class Booking extends Model
     ];
 
 
+
+
     /* ───────────────
      | RELATIONSHIPS
      ─────────────── */
@@ -39,6 +59,11 @@ class Booking extends Model
     public function apartment()
     {
         return $this->belongsTo(Apartment::class);
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
     }
 
     public function guest()
@@ -83,5 +108,16 @@ class Booking extends Model
     protected static function booted()
     {
         static::addGlobalScope(new OwnerScope());
+    }
+
+    // Booking Methods
+    public function approve()
+    {
+        $this->update(['status' => 'approved']);
+    }
+
+    public function refund()
+    {
+        $this->update(['status' => 'refunded']);
     }
 }

@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\WalletTransactions\Tables;
+namespace App\Filament\Resources\Activities\Tables;
 
 use Filament\Tables\Table;
-use App\Enums\WalletTransType;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 
-class WalletTransactionsTable
+class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
@@ -30,41 +29,30 @@ class WalletTransactionsTable
             ->searchable()
             ->columns([
                 //
-                TextColumn::make('reference')
-                    ->label('Ref#')
+                TextColumn::make('causer.name')
+                    ->label('User')
+                    ->default('System')
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
-                TextColumn::make('user.name')
-                    ->label('Customer')
+
+                TextColumn::make('description')
+                    ->label('Description')
+                    ->wrap()
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
-                TextColumn::make('type')
-                    ->badge()
-                    ->color(fn(WalletTransType $state) => match ($state) {
-                        WalletTransType::CREDIT => "success",
-                        WalletTransType::DEBIT => "danger",
-                        default => 'gray',
-                    })
-                    ->icon(fn(WalletTransType $state) => match ($state) {
-                        WalletTransType::CREDIT => 'heroicon-o-plus-circle',
-                        WalletTransType::DEBIT => 'heroicon-o-minus-circle',
-                        default => null,
-                    })
-                    ->alignCenter(),
-                TextColumn::make('amount')
-                    ->money('NGN')
-                    ->label('Amount')
-                    ->alignRight()
-                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+
+                TextColumn::make('subject_type')
+                    ->label('Model')
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
 
                 TextColumn::make('created_at')
-                    ->dateTime()
                     ->label('Date')
+                    ->dateTime()
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                // EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

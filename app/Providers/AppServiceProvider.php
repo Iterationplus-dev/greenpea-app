@@ -31,10 +31,10 @@ class AppServiceProvider extends ServiceProvider
     {
         BookingPayment::observe(BookingPaymentObserver::class);
         Booking::observe(BookingObserver::class);
-        Booking::observe(AuditObserver::class);
-        BookingPayment::observe(AuditObserver::class);
-        Refund::observe(AuditObserver::class);
-        Wallet::observe(AuditObserver::class);
+        // Booking::observe(AuditObserver::class);
+        // BookingPayment::observe(AuditObserver::class);
+        // Refund::observe(AuditObserver::class);
+        // Wallet::observe(AuditObserver::class);
 
         //
         // Event::listen(
