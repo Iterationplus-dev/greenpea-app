@@ -118,30 +118,41 @@ class BookingsTable
                     }),
 
                 Action::make('invoice')
-                    ->label('Invoice')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->url(fn($record) => route('invoices.download', $record->invoice))
-                    ->openUrlInNewTab(),
-
-                /* REFUND */
-                Action::make('refund')
-                    ->icon('heroicon-o-arrow-uturn-left')
-                    ->color('danger')
-                    ->visible(
-                        fn(Booking $record) =>
-                        $record->status === 'approved'
-                            && auth()->user()->can('bookings.refund')
-                    )
-                    ->requiresConfirmation()
-                    ->action(fn(Booking $record) => $record->refund()),
-
-                /* DOWNLOAD INVOICE */
-                Action::make('invoice')
-                    ->label('Invoice')
+                    ->label('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
                     ->url(fn(Booking $record) => $record->invoice?->pdf_url)
                     ->openUrlInNewTab()
-                    ->visible(fn(Booking $record) => $record->invoice !== null),
+                    ->visible(
+                        fn(Booking $record) =>
+                        $record->invoice !== null &&
+                            $record->invoice->pdf_url !== null
+                    ),
+
+                // Action::make('invoice')
+                //     ->label('Invoice')
+                //     ->icon('heroicon-o-document-arrow-down')
+                //     ->url(fn($record) => route('invoices.download', $record->invoice))
+                //     ->openUrlInNewTab(),
+
+                /* REFUND */
+                // Action::make('refund')
+                //     ->icon('heroicon-o-arrow-uturn-left')
+                //     ->color('danger')
+                //     ->visible(
+                //         fn(Booking $record) =>
+                //         $record->status === 'approved'
+                //             && auth()->user()->can('bookings.refund')
+                //     )
+                //     ->requiresConfirmation()
+                //     ->action(fn(Booking $record) => $record->refund()),
+
+                /* DOWNLOAD INVOICE */
+                // Action::make('invoice')
+                //     ->label('Invoice')
+                //     ->icon('heroicon-o-document-arrow-down')
+                //     ->url(fn(Booking $record) => $record->invoice?->pdf_url)
+                //     ->openUrlInNewTab()
+                //     ->visible(fn(Booking $record) => $record->invoice !== null),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -9,10 +9,7 @@ use App\Services\InvoiceService;
 
 class ProcessPaymentReceived
 {
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
     public function handle(PaymentReceived $event)
     {
         DB::transaction(function () use ($event) {
@@ -38,6 +35,10 @@ class ProcessPaymentReceived
                 'is_fully_paid' => true,
                 'paid_at' => now(),
             ]);
+
+            //
+            app(InvoiceService::class)->markAsPaid($invoice);
+            app(InvoiceService::class)->finalizeInvoice($invoice);
         });
     }
 }

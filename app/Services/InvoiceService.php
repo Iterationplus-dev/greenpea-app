@@ -86,4 +86,27 @@ class InvoiceService
             'paid_at' => now(),
         ]);
     }
+
+    //
+    public function finalizeInvoice(Invoice $invoice)
+    {
+        if ($invoice->pdf_url) {
+            return;
+        }
+
+        // 1. Generate PDF
+        $pdfPath = app(PdfService::class)->generateInvoice($invoice);
+
+        // 2. Upload to Cloudinary
+        $url = app(CloudinaryService::class)->uploadInvoice($pdfPath);
+
+        // 3. Save URL
+        $invoice->update([
+            'pdf_url' => $url,
+        ]);
+
+        // 4. Email receipt
+        Mail::to($invoice->booking->user->email)
+            ->send(new PaymentReceiptMail($invoice));
+    }
 }
