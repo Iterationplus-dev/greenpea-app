@@ -7,11 +7,9 @@ namespace App\Models;
 use Filament\Panel;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
-use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Testing\Fluent\Concerns\Has;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -42,6 +40,8 @@ class User extends Authenticatable implements FilamentUser
             ->logOnly([
                 'name',
                 'email',
+                'role',
+                'status'
             ])
             ->logOnlyDirty()
             ->useLogName('user')

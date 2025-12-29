@@ -74,3 +74,4 @@ class BookingResource extends Resource
         ];
     }
 }
+

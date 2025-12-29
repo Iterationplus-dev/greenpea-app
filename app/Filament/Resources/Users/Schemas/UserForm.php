@@ -10,10 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\CheckboxList;
-
-use Filament\Forms\Components\DateTimePicker;
-use App\Filament\Resources\Users\Pages\CreateUser;
+use Filament\Forms\Get;
 
 class UserForm
 {
@@ -67,22 +64,40 @@ class UserForm
                             ->reactive()
                             ->live()
                             ->columnSpanFull(),
+                        // TextInput::make('password')
+                        //     ->password()
+                        //     ->dehydrateStateUsing(fn($state) => bcrypt($state))
+                        //     // ->required(fn($livewire) => $livewire instanceof CreateUser)
+                        //     ->required(fn(string $context) => $context === 'create')
+                        //     ->revealable()
+                        //     ->columns(1)
+                        //     ->hiddenOn('edit'),
+
                         TextInput::make('password')
+                            ->label('Password')
                             ->password()
-                            ->dehydrateStateUsing(fn($state) => bcrypt($state))
-                            // ->required(fn($livewire) => $livewire instanceof CreateUser)
-                            ->required(fn(string $context) => $context === 'create')
                             ->revealable()
-                            ->columns(1)
-                            ->hiddenOn('edit'),
+                            ->required(fn(string $context) => $context === 'create')
+                            ->dehydrated(fn($state) => filled($state)) // ⬅ only save if filled
+                            ->dehydrateStateUsing(fn($state) => bcrypt($state))
+                            ->columnSpan(1),
+
+                        // TextInput::make('password_confirmation')
+                        //     ->label('Confirm Password')
+                        //     ->password()
+                        //     ->revealable()
+                        //     ->required()
+                        //     ->columns(1)
+                        //     ->dehydrated(false),
 
                         TextInput::make('password_confirmation')
                             ->label('Confirm Password')
                             ->password()
                             ->revealable()
-                            ->required()
-                            ->columns(1)
-                            ->dehydrated(false),
+                            ->required(fn($get) => filled($get('password'))) // ⬅ only required if password is set
+                            ->same('password')
+                            ->dehydrated(false)
+                            ->columnSpan(1),
 
                         Select::make('status')
                             ->label('Account Status')

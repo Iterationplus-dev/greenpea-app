@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\BookingStatus;
 use App\Models\Scopes\OwnerScope;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Booking extends Model
 {
     //
     use LogsActivity;
-    // protected static $logName = 'booking';
-    // protected static $logAttributes = ['status', 'amount'];
     protected $table = 'bookings';
     protected $fillable = [
         'user_id',
@@ -32,7 +31,7 @@ class Booking extends Model
         return LogOptions::defaults()
             ->logOnly([
                 'status',
-                'amount',
+                'total_amount',
                 'start_date',
                 'end_date',
             ])
@@ -119,5 +118,11 @@ class Booking extends Model
     public function refund()
     {
         $this->update(['status' => 'refunded']);
+    }
+
+    public function canBeRefunded(): bool
+    {
+        return $this->status === BookingStatus::APPROVED
+            && $this->payments()->where('status', 'success')->exists();
     }
 }

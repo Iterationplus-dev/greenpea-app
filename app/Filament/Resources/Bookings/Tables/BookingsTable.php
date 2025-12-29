@@ -2,17 +2,20 @@
 
 namespace App\Filament\Resources\Bookings\Tables;
 
+use App\Enums\UserRole;
 use App\Models\Booking;
 use Filament\Tables\Table;
 use App\Enums\BookingStatus;
 use Filament\Actions\Action;
+use App\Events\BookingApproved;
+use App\Services\RefundService;
 use Filament\Actions\EditAction;
 use Filament\Actions\CreateAction;
+use Illuminate\Support\Facades\DB;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Illuminate\Database\Eloquent\Builder;
 
 class BookingsTable
@@ -22,7 +25,17 @@ class BookingsTable
         return $table
             ->striped()
             ->defaultSort('name', 'asc')
-            ->modifyQueryUsing(fn(Builder $query) => $query)
+            // ->modifyQueryUsing(fn(Builder $query) => $query)
+            ->modifyQueryUsing(function (Builder $query) {
+                $user = auth()->user();
+
+                if ($user->hasRole(UserRole::PROPERTY_OWNER)) {
+                    $query->whereHas('apartment.property', function ($q) use ($user) {
+                        $q->where('owner_id', $user->id);
+                    });
+                }
+            })
+
             ->emptyStateIcon('heroicon-o-calendar-days')
             ->emptyStateHeading('No bookings found!')
             ->emptyStateDescription('You don\'t have bookings yet. Click the button to add a booking.')
@@ -74,14 +87,41 @@ class BookingsTable
                 // EditAction::make(),
                 /* APPROVE */
                 Action::make('approve')
+                    ->label('Approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(
-                        fn(Booking $record) =>
-                        $record->status === 'pending'
-                            && auth()->user()->can('bookings.approve')
-                    )
-                    ->action(fn(Booking $record) => $record->approve()),
+                    ->visible(fn($record) => $record->status === BookingStatus::PENDING)
+                    ->requiresConfirmation()
+                    ->action(function (Booking $record) {
+                        if ($record->approved_at) {
+                            return; // Already processed — safety lock
+                        }
+
+                        DB::transaction(function () use ($record) {
+                            $record->update([
+                                'status' => BookingStatus::APPROVED,
+                                'approved_at' => now(),
+                            ]);
+                            event(new BookingApproved($record->fresh()));
+                        });
+                    }),
+
+
+                Action::make('refund')
+                    ->label('Refund')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn($record) => $record->canBeRefunded())
+                    ->action(function ($record) {
+                        app(RefundService::class)->refundBooking($record);
+                    }),
+
+                Action::make('invoice')
+                    ->label('Invoice')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->url(fn($record) => route('invoices.download', $record->invoice))
+                    ->openUrlInNewTab(),
 
                 /* REFUND */
                 Action::make('refund')

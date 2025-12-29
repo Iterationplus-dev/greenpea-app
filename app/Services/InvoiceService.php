@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\Invoice;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Cloudinary\Cloudinary;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceService
 {
@@ -25,13 +27,13 @@ class InvoiceService
         //     compact('booking', 'invoice')
         // )->setPaper('a4');
 
-         $pdf = Pdf::loadView('pdf.invoice', [
+        $pdf = Pdf::loadView('pdf.invoice', [
             'booking' => $booking,
             'invoice' => $invoice,
         ]);
 
-         $cloudinary = new Cloudinary();
-         $upload = $cloudinary->uploadApi()->upload(
+        $cloudinary = new Cloudinary();
+        $upload = $cloudinary->uploadApi()->upload(
             'data:application/pdf;base64,' . base64_encode($pdf->output()),
             [
                 'folder' => 'invoices',
@@ -48,11 +50,40 @@ class InvoiceService
 
         // $invoice->update(['pdf_path' => $path]);
 
-         $invoice->update([
+        $invoice->update([
             'pdf_path' => $upload['secure_url'],
             'pdf_public_id' => $upload['public_id'],
         ]);
 
         return $invoice;
+    }
+
+    //
+    public function createForBooking(Booking $booking): Invoice
+    {
+        // Idempotency: never create twice
+        if ($booking->invoice) {
+            return $booking->invoice;
+        }
+
+        return Invoice::create([
+            'booking_id' => $booking->id,
+            'reference' => 'INV-' . Str::upper(Str::random(10)),
+            'amount' => $booking->amount,
+            'status' => 'unpaid',
+            'issued_at' => now(),
+        ]);
+    }
+
+    public function markAsPaid(Invoice $invoice): void
+    {
+        if ($invoice->status === 'paid') {
+            return;
+        }
+
+        $invoice->update([
+            'status' => 'paid',
+            'paid_at' => now(),
+        ]);
     }
 }

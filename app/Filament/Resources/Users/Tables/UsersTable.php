@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Filament\Actions\EditAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,7 +25,13 @@ class UsersTable
         return $table
             ->striped()
             ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(fn(Builder $query) => $query)
+            // ->modifyQueryUsing(fn(Builder $query) => $query)
+            ->deferLoading(fn() => ! request()->has('record'))
+            ->modifyQueryUsing(function (Builder $query) {
+                if ($recordId = request()->query('record')) {
+                    $query->where('id', $recordId);
+                }
+            })
             ->emptyStateIcon('heroicon-o-users')
             ->emptyStateHeading('No users found!')
             ->emptyStateDescription('You don\'t have users yet. Click the button to add a user.')
@@ -32,7 +39,7 @@ class UsersTable
                 CreateAction::make(),
             ])
             ->paginatedWhileReordering()
-            ->deferLoading()
+            // ->deferLoading()
             ->columns([
                 TextColumn::make('name')
                     ->label('Full Name')
@@ -106,6 +113,12 @@ class UsersTable
 
                 // Actions column removed; use recordActions for row actions
             ])
+            ->recordClasses(
+                fn($record) =>
+                request('record') == $record->id
+                    ? 'highlighted-row'
+                    : null
+            )
             ->filters([
                 //
                 SelectFilter::make('status')
@@ -115,7 +128,15 @@ class UsersTable
                             ->mapWithKeys(fn($status) => [
                                 $status->value => ucfirst($status->value),
                             ])
-                    )
+                    ),
+                // Filter::make('record')
+                //     ->query(
+                //         fn($query, array $data) =>
+                //         $query->when(
+                //             request()->get('record'),
+                //             fn($q, $id) => $q->where('id', $id)
+                //         )
+                //     ),
             ])
             ->recordActions([
                 EditAction::make()

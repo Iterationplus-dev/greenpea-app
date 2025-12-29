@@ -361,4 +361,9 @@
         padding-block: calc(var(--spacing) * 1);
     }
 
+    .highlighted-row {
+        background-color: #f0fdfa !important;
+        box-shadow: 0 0 0 1.5px #10b981 !important;
+    }
+
 }
