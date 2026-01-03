@@ -2,12 +2,6 @@
 
 namespace App\Filament\Resources\Users;
 
-use App\Enums\UserRole;
-use App\Filament\Resources\Users\Pages\CreateUser;
-use App\Filament\Resources\Users\Pages\EditUser;
-use App\Filament\Resources\Users\Pages\ListUsers;
-use App\Filament\Resources\Users\Schemas\UserForm;
-use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
 use UnitEnum;
@@ -15,23 +9,31 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Filament\Resources\Users\Schemas\UserForm;
+use App\Filament\Resources\Users\Tables\UsersTable;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
-    protected static string | UnitEnum | null $navigationGroup = 'System';
+    protected static string|UnitEnum|null $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Manage Users';
     protected static ?int $navigationSort = 3;
-    protected static ?string $recordTitleAttribute = 'User';
+    protected static ?string $recordTitleAttribute = 'name';
 
+    /**
+     * Only Admins / Super Admins can manage platform users
+     */
     public static function canAccess(): bool
     {
-        return auth()->user()?->hasAnyRole([UserRole::SUPER_ADMIN->value, UserRole::ADMIN->value]);//admin and super admin only
-        // return auth()->user()?->hasRole(UserRole::ADMIN->value);//admin only
-        // return auth()->user()?->hasRole(UserRole::SUPER_ADMIN->value);//super admin only
+        return admin()?->isSuper() === true
+            || admin()?->isAdmin() === true;
     }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -42,19 +44,12 @@ class UserResource extends Resource
         return UsersTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => ListUsers::route('/'),
+            'index'  => ListUsers::route('/'),
             'create' => CreateUser::route('/create'),
-            'edit' => EditUser::route('/{record}/edit'),
+            'edit'   => EditUser::route('/{record}/edit'),
         ];
     }
 }

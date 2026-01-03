@@ -113,6 +113,12 @@ class User extends Authenticatable implements FilamentUser
         ], true);
     }
 
+    // Guards
+    // public static function canViewAny(): bool
+    // {
+    //     return auth()->guard('admin')->check();
+    // }
+
 
 
 

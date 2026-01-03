@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ApartmentImage extends Model
 {
@@ -19,6 +20,35 @@ class ApartmentImage extends Model
     protected $casts = [
         'is_featured' => 'boolean',
     ];
+
+    public function getUrlAttribute()
+    {
+        return Cloudinary::getUrl($this->image_path, [
+            'quality' => 'auto',
+            'fetch_format' => 'auto',
+            'width' => 800,
+            'crop' => 'fill',
+        ]);
+    }
+
+
+    public static function booted()
+    {
+        static::creating(function ($image) {
+            if (! static::where('apartment_id', $image->apartment_id)->exists()) {
+                $image->is_featured = true;
+            }
+        });
+
+        static::saving(function ($image) {
+            if ($image->is_featured) {
+                static::where('apartment_id', $image->apartment_id)
+                    ->where('id', '!=', $image->id)
+                    ->update(['is_featured' => false]);
+            }
+        });
+    }
+
 
     /* RELATIONSHIPS */
 

@@ -4,63 +4,84 @@ namespace App\Policies;
 
 use App\Models\Booking;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Admin;
 
 class BookingPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Can list bookings
      */
-    public function viewAny(User $user): bool
+    public function viewAny($actor): bool
     {
+        // Admin panel
+        if ($actor instanceof Admin) {
+            return $actor->canManageBookings();
+        }
+
+        // Frontend users (they will be scoped to their own bookings)
+        if ($actor instanceof User) {
+            return true;
+        }
+
         return false;
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Can view a booking
      */
-    public function view(User $user, Booking $booking): bool
+    public function view($actor, Booking $booking): bool
     {
-        return $user->isAdmin()
-            || $booking->apartment->property->owner_id === $user->id;
-    }
+        if ($actor instanceof Admin) {
+            return $actor->canManageBookings();
+        }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
+        if ($actor instanceof User) {
+            return
+                $booking->user_id === $actor->id || // guest
+                $booking->apartment->property->owner_id === $actor->id; // owner
+        }
+
         return false;
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Only admins can update bookings (approve / cancel)
      */
-    public function update(User $user, Booking $booking): bool
+    public function update($actor, Booking $booking): bool
     {
+        if ($actor instanceof Admin) {
+            return $actor->canManageBookings();
+        }
+
         return false;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Only finance admins can refund
      */
-    public function delete(User $user, Booking $booking): bool
+    public function refund($actor, Booking $booking): bool
     {
+        if ($actor instanceof Admin) {
+            return $actor->canManageFinance();
+        }
+
         return false;
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Nobody deletes bookings (accounting safety)
      */
-    public function restore(User $user, Booking $booking): bool
+    public function delete($actor, Booking $booking): bool
     {
         return false;
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Booking $booking): bool
+    public function restore($actor, Booking $booking): bool
+    {
+        return false;
+    }
+
+    public function forceDelete($actor, Booking $booking): bool
     {
         return false;
     }

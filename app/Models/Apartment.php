@@ -44,6 +44,17 @@ class Apartment extends Model
             ->where('is_featured', true);
     }
 
+    // Fallback: if no featured, use first image
+    public function getFeaturedImageAttribute()
+    {
+        return $this->featuredImage()->first() ?? $this->images()->orderBy('sort_order')->first();
+    }
+
+    public function getFeaturedImageUrlAttribute()
+    {
+        return $this->featured_image?->url;
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

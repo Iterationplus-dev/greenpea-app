@@ -22,16 +22,17 @@ class BookingsTable
 {
     public static function configure(Table $table): Table
     {
+        $admin = auth('admin')->user();
         return $table
             ->striped()
             ->defaultSort('name', 'asc')
             // ->modifyQueryUsing(fn(Builder $query) => $query)
             ->modifyQueryUsing(function (Builder $query) {
-                $user = auth()->user();
+                $admin = auth('admin')->user();
 
-                if ($user->hasRole(UserRole::PROPERTY_OWNER)) {
-                    $query->whereHas('apartment.property', function ($q) use ($user) {
-                        $q->where('owner_id', $user->id);
+                if ($admin->type->value === 'owner') {
+                    $query->whereHas('apartment.property', function ($q) use ($admin) {
+                        $q->where('owner_id', $admin->id);
                     });
                 }
             })
@@ -84,17 +85,18 @@ class BookingsTable
                 //
             ])
             ->recordActions([
-                // EditAction::make(),
+
                 /* APPROVE */
                 Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn($record) => $record->status === BookingStatus::PENDING)
                     ->requiresConfirmation()
+                    ->visible(fn(Booking $record) => $record->status === BookingStatus::PENDING)
                     ->action(function (Booking $record) {
+
                         if ($record->approved_at) {
-                            return; // Already processed — safety lock
+                            return;
                         }
 
                         DB::transaction(function () use ($record) {
@@ -102,58 +104,46 @@ class BookingsTable
                                 'status' => BookingStatus::APPROVED,
                                 'approved_at' => now(),
                             ]);
+
                             event(new BookingApproved($record->fresh()));
                         });
                     }),
 
-
+                /* REFUND */
                 Action::make('refund')
                     ->label('Refund')
                     ->icon('heroicon-o-arrow-uturn-left')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->visible(fn($record) => $record->canBeRefunded())
-                    ->action(function ($record) {
-                        app(RefundService::class)->refundBooking($record);
-                    }),
+                    // ->visible(
+                    //     fn(Booking $record) =>
+                    //     $record->canBeRefunded()
+                    //         && auth()->user()->can('bookings.refund')
+                    // )
 
+                    ->visible(
+                        fn(Booking $record) =>
+                        $record->canBeRefunded()
+                            && $admin->canManageFinance()
+                    )
+                    ->action(
+                        fn(Booking $record) =>
+                        app(RefundService::class)->refundBooking($record)
+                    ),
+
+                /* DOWNLOAD INVOICE */
                 Action::make('invoice')
                     ->label('Download Invoice')
                     ->icon('heroicon-o-document-arrow-down')
-                    ->url(fn(Booking $record) => $record->invoice?->pdf_url)
                     ->openUrlInNewTab()
+                    ->url(fn(Booking $record) => $record->invoice?->pdf_url)
                     ->visible(
                         fn(Booking $record) =>
                         $record->invoice !== null &&
                             $record->invoice->pdf_url !== null
                     ),
-
-                // Action::make('invoice')
-                //     ->label('Invoice')
-                //     ->icon('heroicon-o-document-arrow-down')
-                //     ->url(fn($record) => route('invoices.download', $record->invoice))
-                //     ->openUrlInNewTab(),
-
-                /* REFUND */
-                // Action::make('refund')
-                //     ->icon('heroicon-o-arrow-uturn-left')
-                //     ->color('danger')
-                //     ->visible(
-                //         fn(Booking $record) =>
-                //         $record->status === 'approved'
-                //             && auth()->user()->can('bookings.refund')
-                //     )
-                //     ->requiresConfirmation()
-                //     ->action(fn(Booking $record) => $record->refund()),
-
-                /* DOWNLOAD INVOICE */
-                // Action::make('invoice')
-                //     ->label('Invoice')
-                //     ->icon('heroicon-o-document-arrow-down')
-                //     ->url(fn(Booking $record) => $record->invoice?->pdf_url)
-                //     ->openUrlInNewTab()
-                //     ->visible(fn(Booking $record) => $record->invoice !== null),
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

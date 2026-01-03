@@ -2,81 +2,96 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-use App\Enums\UserRole;
 use App\Models\Property;
-use Illuminate\Auth\Access\Response;
+use App\Models\User;
+use App\Models\Admin;
 
 class PropertyPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Who can see the property list
      */
-    public function viewAny(User $user): bool
+    public function viewAny($actor): bool
     {
-        // return true;
-        return $user->can('properties.view');
-    }
+        // Admin panel
+        if ($actor instanceof Admin) {
+            return $actor->canManageProperties();
+        }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Property $property): bool
-    {
-        // return $user->isAdmin() || $property->owner_id === $user->id;
-        // return $user->hasRole(UserRole::SUPER_ADMIN)
-        //     || $property->owner_id === $user->id;
+        // Frontend users (owners see their own)
+        if ($actor instanceof User) {
+            return true;
+        }
 
-            return $user->hasAnyRole([UserRole::ADMIN->value, UserRole::SUPER_ADMIN->value])|| $property->owner_id === $user->id;
-            // return $user->hasRole('super_admin')
-            //     || ($user->can('properties.view') && $property->owner_id === $user->id);
-            // return true;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return in_array($user->role, [
-            UserRole::SUPER_ADMIN,
-            UserRole::PROPERTY_OWNER,
-        ], true);
-        // return $user->can('properties.create');
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Property $property): bool
-    {
-        // return $user->isSuperAdmin() || $property->user_id === $user->id;
-        // return $this->view($user, $property);
-        return $user->hasRole('admin')
-            || ($user->can('properties.update') && $property->owner_id === $user->id);
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Property $property): bool
-    {
-        // return $user->isSuperAdmin();
-        return $user->hasRole('admin');
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Property $property): bool
-    {
         return false;
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Who can view a property
      */
-    public function forceDelete(User $user, Property $property): bool
+    public function view($actor, Property $property): bool
+    {
+        if ($actor instanceof Admin) {
+            return $actor->canManageProperties();
+        }
+
+        if ($actor instanceof User) {
+            return $property->owner_id === $actor->id;
+        }
+
+        return false;
+    }
+
+    /**
+     * Who can create properties
+     */
+    public function create($actor): bool
+    {
+        if ($actor instanceof Admin) {
+            return $actor->canManageProperties();
+        }
+
+        if ($actor instanceof User) {
+            return $actor->isOwner();
+        }
+
+        return false;
+    }
+
+    /**
+     * Who can update properties
+     */
+    public function update($actor, Property $property): bool
+    {
+        if ($actor instanceof Admin) {
+            return $actor->canManageProperties();
+        }
+
+        if ($actor instanceof User) {
+            return $property->owner_id === $actor->id;
+        }
+
+        return false;
+    }
+
+    /**
+     * Only admins can delete properties
+     */
+    public function delete($actor, Property $property): bool
+    {
+        if ($actor instanceof Admin) {
+            return $actor->isSuper();
+        }
+
+        return false;
+    }
+
+    public function restore($actor, Property $property): bool
+    {
+        return false;
+    }
+
+    public function forceDelete($actor, Property $property): bool
     {
         return false;
     }

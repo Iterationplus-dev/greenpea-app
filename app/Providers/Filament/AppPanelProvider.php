@@ -24,13 +24,22 @@ class AppPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            // ->id('getMultiFactorAuthenticationRequiredMiddlewareName')
             ->id('app')
-            ->path('app')
+            // ->domain('admin.greenpea.test')
+            ->domain('admin.greenpea-app.test')
+            ->path('/')
+            // ->path('app')
             ->login()
-            ->authMiddleware(['auth'])
+            ->authGuard('admin')
+            // ->authMiddleware(['auth'])//single guard
+            ->authMiddleware([
+                Authenticate::class,
+            ])
 
             ->colors([
                 'primary' => Color::Emerald,
+                //'primary' => '#16a34a', // optional
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->brandName('GreenPea')
@@ -75,9 +84,9 @@ class AppPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
-                Authenticate::class,
             ]);
+            // ->authMiddleware([
+            //     Authenticate::class,
+            // ]);
     }
 }

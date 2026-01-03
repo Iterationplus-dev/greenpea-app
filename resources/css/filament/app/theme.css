@@ -7,8 +7,39 @@
 
 @layer components {
 
+    .fi-sidebar-item-label {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: .905rem;
+        line-height: 1.3rem;
+        --tw-font-weight: var(--font-weight-small);
+        font-weight: var(--font-weight-small);
+        /* color: var(--gray-700); */
+        color: #2b2c2c;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .fi-sidebar-item-btn {
+        transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+        transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+        transition-duration: var(--tw-duration, var(--default-transition-duration));
+        --tw-duration: 75ms;
+        height: 1.7.1rem;
+        transition-duration: 75ms;
+    }
+
+    .fi-sidebar-item-btn>.fi-icon {
+        color: var(--gray-700);
+    }
+
+    .fi-icon.fi-size-lg {
+        width: calc(var(--spacing) * 3.5);
+        height: calc(var(--spacing) * 3.5);
+    }
+
     .fi-sidebar {
-        background-color: #e9f3efb4 !important;
+        background-color: #f2fcf8 !important;
     }
 
     /* Dark mode */
@@ -50,8 +81,9 @@
 
     /* 1. Target the main table cell (<td>) element */
     .fi-ta-cell {
-        padding-top: 0.1rem !important;
-        padding-bottom: 0.1rem !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        font-size: 0.95rem !important;
     }
 
     /* 2. Target the table header cell (<th>) for consistency */
@@ -75,10 +107,9 @@
     }
 
     .fi-ta-text-item.fi-size-sm {
-        font-size: 0.875rem !important;
-        line-height: 0.1rem !important;
-        --tw-leading: 0.1rem !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        font-size: .875rem !important;
+        line-height: 0 !important;
+        --tw-leading: 0 !important;
     }
 
     .custom-padding-right-column {
@@ -105,23 +136,23 @@
 
     /* ToggleColumn */
     .fi-toggle {
-        width: 2.75rem !important;
-        height: 1.45rem !important;
+        width: 2.70rem !important;
+        height: 1.30rem !important;
     }
 
     /* Target the internal switch track */
     .fi-toggle .fi-toggle-track {
         width: 0.95rem !important;
-        height: 0.75rem !important;
-        min-width: 0.35rem !important;
-        min-height: 0.35rem !important;
+        height: 0.55rem !important;
+        min-width: 0.25rem !important;
+        min-height: 0.25rem !important;
     }
 
     /* Target the internal thumb (the moving circle) */
     .fi-toggle .fi-toggle-thumb {
         /* Adjust thumb size relative to the new height */
-        width: 0.5px !important;
-        height: 0.5px !important;
+        width: 0.1px !important;
+        height: 0.1px !important;
     }
 
     .fi-ta-toggle.fi-align-center {

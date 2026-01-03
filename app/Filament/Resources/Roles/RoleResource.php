@@ -2,14 +2,13 @@
 
 namespace App\Filament\Resources\Roles;
 
-use UnitEnum;
 use BackedEnum;
-use App\Enums\UserRole;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
+use UnitEnum;
 use Filament\Resources\Resource;
-use Spatie\Permission\Models\Role;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
+use Spatie\Permission\Models\Role;
 use App\Filament\Resources\Roles\Pages\EditRole;
 use App\Filament\Resources\Roles\Pages\ListRoles;
 use App\Filament\Resources\Roles\Pages\CreateRole;
@@ -18,19 +17,20 @@ use App\Filament\Resources\Roles\Tables\RolesTable;
 
 class RoleResource extends Resource
 {
-    // protected static ?string $model = Role::class;
     protected static ?string $model = Role::class;
-    protected static string | UnitEnum | null $navigationGroup = 'System';
+
+    protected static string|UnitEnum|null $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Manage Roles';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 3;
 
-    protected static ?string $recordTitleAttribute = 'Role';
-
-      protected static ?int $navigationSort = 3;
-
+    /**
+     * Only Super Admins can manage roles
+     */
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]);
+        return admin()?->isSuper() === true;
     }
 
     public static function form(Schema $schema): Schema
@@ -43,19 +43,12 @@ class RoleResource extends Resource
         return RolesTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => ListRoles::route('/'),
+            'index'  => ListRoles::route('/'),
             'create' => CreateRole::route('/create'),
-            'edit' => EditRole::route('/{record}/edit'),
+            'edit'   => EditRole::route('/{record}/edit'),
         ];
     }
 }

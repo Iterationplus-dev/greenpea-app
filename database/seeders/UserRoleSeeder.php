@@ -16,39 +16,30 @@ class UserRoleSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@greenpeaapartments.com'],
+            ['email' => 'guest@greenpeaapartments.com'],
             [
-                'name' => 'Super Admin',
+                'name' => 'Super Guest',
                 'phone' => '+2348034567890',
                 'password' => Hash::make('password'),
-                'role' => UserRole::SUPER_ADMIN,
+                'role' => UserRole::GUEST,
             ]
         );
 
-        User::factory(5)->create([
+        User::factory(3)->create([
             'role' => UserRole::PROPERTY_OWNER,
         ]);
 
-        User::factory(1)->create([
-            'role' => UserRole::ADMIN,
-        ]);
-        User::factory(1)->create([
-            'role' => UserRole::MANAGER,
-        ]);
-
-        User::factory(10)->create([
+        User::factory(20)->create([
             'role' => UserRole::GUEST,
         ]);
 
-        User::factory(5)->create([
+        User::factory(2)->create([
             'role' => UserRole::CUSTOMER,
         ]);
-        User::factory(8)->create([
+        User::factory(5)->create([
             'role' => UserRole::AGENT,
         ]);
-        User::factory(3)->create([
-            'role' => UserRole::STAFF,
-        ]);
+
         User::factory(2)->create([
             'role' => UserRole::DEVELOPER,
         ]);

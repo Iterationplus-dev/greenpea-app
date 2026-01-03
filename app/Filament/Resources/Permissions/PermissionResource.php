@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\Permissions;
 
-use UnitEnum;
 use BackedEnum;
-use App\Enums\UserRole;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
+use UnitEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
 use Spatie\Permission\Models\Permission;
 use App\Filament\Resources\Permissions\Pages\EditPermission;
@@ -21,15 +20,17 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
-protected static string | UnitEnum | null $navigationGroup = 'System';
+    protected static string|UnitEnum|null $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Manage Permissions';
-    protected static ?string $recordTitleAttribute = 'Permission';
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 3;
 
-      protected static ?int $navigationSort = 3;
-
-     public static function canAccess(): bool
+    /**
+     * Only Super Admins can manage permissions
+     */
+    public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]);
+        return admin()?->isSuper() === true;
     }
 
     public static function form(Schema $schema): Schema
@@ -42,19 +43,12 @@ protected static string | UnitEnum | null $navigationGroup = 'System';
         return PermissionsTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => ListPermissions::route('/'),
+            'index'  => ListPermissions::route('/'),
             'create' => CreatePermission::route('/create'),
-            'edit' => EditPermission::route('/{record}/edit'),
+            'edit'   => EditPermission::route('/{record}/edit'),
         ];
     }
 }

@@ -4,17 +4,14 @@ namespace App\Filament\Resources\Bookings;
 
 use UnitEnum;
 use BackedEnum;
-use App\Enums\UserRole;
 use App\Models\Booking;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Bookings\Pages\EditBooking;
 use App\Filament\Resources\Bookings\Pages\ViewBooking;
 use App\Filament\Resources\Bookings\Pages\ListBookings;
-use App\Filament\Resources\Bookings\Pages\CreateBooking;
 use App\Filament\Resources\Bookings\Schemas\BookingForm;
 use App\Filament\Resources\Bookings\Tables\BookingsTable;
 
@@ -27,25 +24,33 @@ class BookingResource extends Resource
     protected static ?string $navigationLabel = 'Manage Bookings';
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $recordTitleAttribute = 'Booking';
+    protected static ?string $recordTitleAttribute = 'reference';
 
-    // SCOPING
+    /**
+     * IMPORTANT:
+     * We now scope using ADMIN, not User
+     */
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
 
-        // single role admin can see all bookings //(! auth()->user()->hasRole('admin')
-        if (! auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value, UserRole::ADMIN->value])) {
-            $query->whereHas(
-                'apartment.property',
-                fn($q) =>
-                $q->where('owner_id', auth()->id())
+        $admin = auth('admin')->user();
+
+        // Super Admin & CEO see everything
+        if ($admin->isSuper() || $admin->type->value === 'ceo') {
+            return $query;
+        }
+
+        // Property owners only see bookings for their properties
+        if ($admin->type->value === 'owner') {
+            $query->whereHas('apartment.property', fn ($q) =>
+                $q->where('owner_id', $admin->id)
             );
         }
 
+        // Managers & staff see everything for now (can later be region-scoped)
         return $query;
     }
-
 
     public static function form(Schema $schema): Schema
     {
@@ -57,21 +62,11 @@ class BookingResource extends Resource
         return BookingsTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => ListBookings::route('/'),
-            'view' => ViewBooking::route('/[record]'),
-            // 'create' => CreateBooking::route('/create'),
-            // 'edit' => EditBooking::route('/{record}/edit'),
+            'view' => ViewBooking::route('/{record}'),
         ];
     }
 }
-
