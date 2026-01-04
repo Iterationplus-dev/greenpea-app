@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Apartments\Pages;
 
-use App\Filament\Resources\Apartments\ApartmentResource;
 use Filament\Actions\DeleteAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Apartments\ApartmentResource;
 
 class EditApartment extends EditRecord
 {
@@ -13,7 +14,29 @@ class EditApartment extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->size('sm')
+                ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
+                ->successNotification(
+                    Notification::make()
+                        ->success()
+                        ->title('Apartment Deleted')
+                        ->body('The apartment details deleted successfully')
+                ),
         ];
+    }
+
+    protected function getRedirectUrl(): ?string
+    {
+        // return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('index', ['record' => $this->record->id]);
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->title("Apartment Updated")
+            ->body('Apartment details updated successful')
+            ->success();
     }
 }

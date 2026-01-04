@@ -9,19 +9,4 @@ use App\Models\ApartmentImage;
 class CloudinaryUpload extends Field
 {
     protected string $view = 'filament.components.cloudinary-upload';
-
-    public function saveImages(int $apartmentId, array $files): void
-    {
-        foreach ($files as $file) {
-
-            $uploaded = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'apartments'
-            ]);
-
-            ApartmentImage::create([
-                'apartment_id' => $apartmentId,
-                'image_path' => $uploaded->getPublicId(), // store Cloudinary public_id
-            ]);
-        }
-    }
 }

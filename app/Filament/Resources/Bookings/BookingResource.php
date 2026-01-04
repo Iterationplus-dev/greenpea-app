@@ -41,6 +41,7 @@ class BookingResource extends Resource
             return $query;
         }
 
+        
         // Property owners only see bookings for their properties
         if ($admin->type->value === 'owner') {
             $query->whereHas('apartment.property', fn ($q) =>

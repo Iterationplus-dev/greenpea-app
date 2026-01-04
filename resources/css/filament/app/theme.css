@@ -114,7 +114,7 @@
 
     .custom-padding-right-column {
         /* Set padding-right to 1.5rem (pr-6 equivalent) and force it */
-        padding-right: 2.2rem !important;
+        padding-right: 3.2rem !important;
     }
 
     .custom-padding-left-column {
@@ -267,7 +267,7 @@
     /* Target the RichEditor's wrapper */
     .custom-rich-editor {
         /* Set a minimum height on the entire component */
-        min-height: 125px;
+        min-height: 140px;
     }
 
     /* Target the actual TipTap content area inside the editor */

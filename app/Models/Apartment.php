@@ -45,14 +45,9 @@ class Apartment extends Model
     }
 
     // Fallback: if no featured, use first image
-    public function getFeaturedImageAttribute()
+    public function getFeaturedImageUrlAttribute(): ?string
     {
-        return $this->featuredImage()->first() ?? $this->images()->orderBy('sort_order')->first();
-    }
-
-    public function getFeaturedImageUrlAttribute()
-    {
-        return $this->featured_image?->url;
+        return $this->featuredImage?->url;
     }
 
     public function bookings()

@@ -21,14 +21,21 @@ class ApartmentImage extends Model
         'is_featured' => 'boolean',
     ];
 
-    public function getUrlAttribute()
+    // public function getUrlAttribute()
+    // {
+    //     return Cloudinary::getUrl($this->image_path, [
+    //         'quality' => 'auto',
+    //         'fetch_format' => 'auto',
+    //         'width' => 1200,
+    //         'crop' => 'fill',
+    //     ]);
+    // }
+
+    public function getUrlAttribute(): string
     {
-        return Cloudinary::getUrl($this->image_path, [
-            'quality' => 'auto',
-            'fetch_format' => 'auto',
-            'width' => 800,
-            'crop' => 'fill',
-        ]);
+        return Cloudinary::image($this->image_path)
+            ->resize(\Cloudinary\Transformation\Resize::fill(1200, 800))
+            ->toUrl();
     }
 
 

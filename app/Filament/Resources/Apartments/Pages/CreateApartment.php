@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\Apartments\Pages;
 
 use Filament\Actions\Action;
+use App\services\ApartmentImageService;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use App\Filament\Resources\Apartments\ApartmentResource;
 
 class CreateApartment extends CreateRecord
@@ -53,10 +55,12 @@ class CreateApartment extends CreateRecord
         $images = $data['images'] ?? [];
         unset($data['images']);
 
+        // dd($images);
         $apartment = parent::handleRecordCreation($data);
 
-        app(\App\Filament\Forms\Components\CloudinaryUpload::class)
-            ->saveImages($apartment->id, $images);
+        app(ApartmentImageService::class)
+            // ->store($apartment->id, $images);
+            ->storeFromPaths($apartment->id, $images);
 
         return $apartment;
     }

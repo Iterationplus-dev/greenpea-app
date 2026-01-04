@@ -9,6 +9,7 @@ use App\Filament\Resources\ApartmentImages\Schemas\ApartmentImageForm;
 use App\Filament\Resources\ApartmentImages\Tables\ApartmentImagesTable;
 use App\Models\ApartmentImage;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +19,10 @@ class ApartmentImageResource extends Resource
 {
     protected static ?string $model = ApartmentImage::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'ApartmentImage';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+     protected static ?string $navigationLabel = 'Apartments';
+    protected static string|UnitEnum|null $navigationGroup = 'Properties';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {

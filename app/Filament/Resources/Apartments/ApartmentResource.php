@@ -22,21 +22,27 @@ class ApartmentResource extends Resource
     protected static ?string $model = Apartment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
-
-    protected static ?string $recordTitleAttribute = 'Apartment';
     protected static ?string $navigationLabel = 'Apartments';
-    protected static string | UnitEnum | null $navigationGroup = 'Properties';
+    protected static string|UnitEnum|null $navigationGroup = 'Properties';
+    protected static ?string $recordTitleAttribute = 'name';
 
+
+    /**
+     * Scope apartments based on admin type
+     */
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
 
-        // Property owners only see their apartments
-        if (! auth()->user()->hasAnyRole([UserRole::ADMIN->value, UserRole::SUPER_ADMIN->value])) {
-            $query->whereHas(
-                'property',
-                fn($q) =>
-                $q->where('owner_id', auth()->id())
+        // Super Admin / CEO / Manager → see all
+        if (admin()?->isSuper() || admin()?->canManageProperties()) {
+            return $query;
+        }
+
+        // Owner admins → only their properties
+        if (admin()?->type?->value === 'owner') {
+            $query->whereHas('property', fn ($q) =>
+                $q->where('owner_id', admin()->id)
             );
         }
 
@@ -56,7 +62,7 @@ class ApartmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\Apartments\RelationManagers\ImagesRelationManager::class,
         ];
     }
 

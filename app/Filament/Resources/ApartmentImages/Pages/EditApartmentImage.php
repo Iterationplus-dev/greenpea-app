@@ -13,7 +13,9 @@ class EditApartmentImage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->size('sm')
+                ->extraAttributes(['class' => 'text-xs px-3 py-1.5']),
         ];
     }
 }

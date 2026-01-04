@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources\Apartments\Tables;
 
-use App\Enums\UserRole;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,51 +21,81 @@ class ApartmentsTable
         return $table
             ->striped()
             ->defaultSort('name', 'asc')
-            // ->modifyQueryUsing(fn(Builder $query) => $query)
+            ->deferLoading(fn() => ! request()->has('record'))
             ->modifyQueryUsing(function (Builder $query) {
-                $user = auth()->user();
-
-                if ($user->hasRole(UserRole::PROPERTY_OWNER)) {
-                    $query->whereHas('apartment.property', function ($q) use ($user) {
-                        $q->where('owner_id', $user->id);
-                    });
+                if ($recordId = request()->query('record')) {
+                    $query->where('id', $recordId);
                 }
             })
-
-            ->emptyStateIcon('heroicon-o-calendar-days')
-            ->emptyStateHeading('No apartment found!')
-            ->emptyStateDescription('You don\'t have apartment yet. Click the button to add.')
+            ->emptyStateIcon('heroicon-o-building-office-2')
+            ->emptyStateHeading('No apartments found')
+            ->emptyStateDescription('You have not added any apartments yet.')
             ->emptyStateActions([
                 CreateAction::make(),
             ])
+
             ->paginatedWhileReordering()
-            ->deferLoading()
+            // ->deferLoading()
+
             ->columns([
-                TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('property.name')->label('Property'),
-                TextColumn::make('property.city')->label('City'),
-                TextColumn::make('price_per_month')->money('NGN'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('property.name')
+                    ->label('Property')
+                    ->sortable(),
+
+                TextColumn::make('property.city')
+                    ->label('City')
+                    ->sortable(),
+
+                TextColumn::make('monthly_price')
+                    ->money('NGN')
+                    ->sortable()
+                    ->alignRight()
+                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+
                 ToggleColumn::make('is_available')
                     ->label('Available')
                     ->onIcon('heroicon-o-check-circle')
                     ->offIcon('heroicon-o-x-circle')
                     ->onColor('success')
                     ->offColor('danger')
-                    ->width('5')
                     ->alignCenter()
-                    ->sortable()
-                    ->columnSpan(1),
+                    ->sortable(),
             ])
-            ->defaultSort('name')
-            ->filters([
-                //
-            ])
+            ->recordClasses(
+                fn($record) =>
+                request('record') == $record->id
+                    ? 'highlighted-row'
+                    : null
+            )
+
+            ->recordActionsColumnLabel('Manage')
             ->recordActions([
-                EditAction::make(),
+                ActionGroup::make([
+                    DeleteAction::make()
+                        ->requiresConfirmation()
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Apartment Deleted')
+                                ->body('The apartment details deleted successfully')
+                        ),
+                    EditAction::make()
+                        ->icon('heroicon-o-pencil-square')
+                        ->label('Manage')
+                        ->tooltip('Edit this record')
+                        ->modalHeading('Edit Apartment')
+                        ->color('info'),
+                ])
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                    ->chunkSelectedRecords(10),
                 ]),
             ]);
     }
