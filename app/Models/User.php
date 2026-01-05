@@ -107,11 +107,25 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->role, [
-            UserRole::SUPER_ADMIN,
-            UserRole::SUPPORT,
-        ], true);
+        // return in_array($this->role, [
+        //     UserRole::SUPER_ADMIN,
+        //     UserRole::SUPPORT,
+        // ], true);
+
+        return match ($panel->getId()) {
+            // Guest / User panel
+            'guest' => true,
+
+            // Admin panel (existing logic preserved)
+            'app' => in_array($this->role, [
+                UserRole::SUPER_ADMIN,
+                UserRole::SUPPORT,
+            ], true),
+
+            default => false,
+        };
     }
+
 
     // Guards
     // public static function canViewAny(): bool

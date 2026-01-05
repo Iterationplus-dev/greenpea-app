@@ -1,0 +1,66 @@
+/* Guest Panel Theme */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
+
+
+@layer components {
+
+    /* input border */
+    /* Target the input element within Filament's text input component */
+    .fi-fo-text-input input {
+        border-width: 1.8px !important;
+        border-style: dotted !important;
+        border-color: #1d34ff !important;
+        /*Lightgray*/
+        border-radius: 6px !important;
+        /*Roundedcorners*/
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+        -webkit-border-radius: 6px !important;
+    }
+
+    /* select */
+    /* In your custom CSS file */
+    .choices__inner,
+    .choices {
+        /* Remove outline/focus ring if needed */
+        /* outline: none !important;*/
+        border-width: 1.8px !important;
+        border-style: dotted !important;
+        border-color: #ac1dff !important;
+    }
+
+    .fi-select-input .fi-select-input-value-ctn {
+        text-wrap: wrap;
+        word-break: break-word;
+        align-items: center;
+        width: 100%;
+        display: flex;
+        /*outline-style: solid;
+        border-color: #eb1b1b !important;
+        outline-color: #eb1b1b;
+        */
+        background-color: #fcfcfc !important;
+        border-radius: 6px !important;
+        padding-left: 5px;
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+    }
+
+    .fi-select-input {
+        outline-style: dotted;
+        border-color: #1dffa1 !important;
+        outline-color: #1dffa1;
+        border-radius: 6px !important;
+        -webkit-border-radius: 6px !important;
+        -moz-border-radius: 6px !important;
+        -ms-border-radius: 6px !important;
+        -o-border-radius: 6px !important;
+    }
+}

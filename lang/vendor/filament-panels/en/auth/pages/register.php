@@ -22,7 +22,7 @@ return [
         ],
 
         'name' => [
-            'label' => 'Name',
+            'label' => 'Full name',
         ],
 
         'password' => [
@@ -31,7 +31,7 @@ return [
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm password',
+            'label' => 'Confirm your password',
         ],
 
         'actions' => [
