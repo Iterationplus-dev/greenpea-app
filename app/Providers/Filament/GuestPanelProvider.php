@@ -53,6 +53,8 @@ class GuestPanelProvider extends PanelProvider
             )
             ->pages([
                 Dashboard::class,
+                \App\Filament\Guest\Pages\ContinueBooking::class,
+                \App\Filament\Guest\Pages\CreateBooking::class,
             ])
             ->discoverWidgets(
                 in: app_path('Filament/Guest/Widgets'),

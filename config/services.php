@@ -46,4 +46,9 @@ return [
         'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
     ],
 
+    'paystack' => [
+        'key' => env('PAYSTACK_PUBLIC_KEY'),
+        'secret' => env('PAYSTACK_SECRET_KEY'),
+    ],
+
 ];

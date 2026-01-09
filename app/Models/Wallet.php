@@ -26,4 +26,30 @@ class Wallet extends Model
     {
         return $this->hasMany(WalletTransaction::class);
     }
+    //
+    public function credit(float $amount, string $description = null): void
+    {
+        $this->increment('balance', $amount);
+
+        $this->transactions()->create([
+            'amount' => $amount,
+            'type' => 'credit',
+            'description' => $description,
+        ]);
+    }
+
+    public function debit(float $amount, string $description = null): void
+    {
+        if ($amount > $this->balance) {
+            throw new \RuntimeException('Insufficient wallet balance');
+        }
+
+        $this->decrement('balance', $amount);
+
+        $this->transactions()->create([
+            'amount' => $amount,
+            'type' => 'debit',
+            'description' => $description,
+        ]);
+    }
 }

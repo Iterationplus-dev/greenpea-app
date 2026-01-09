@@ -2,12 +2,13 @@
 
 namespace App\Enums;
 
-enum PaymentStatus:string
+enum PaymentStatus: string
 {
     //
     case PENDING = 'pending';
     case PARTIALLY_PAID = 'partially_paid';
     case PAID = 'paid';
+    case APPROVED = 'approved';
     case CANCELLED = 'cancelled';
 
     public function label(): string
@@ -16,6 +17,7 @@ enum PaymentStatus:string
             self::PENDING => 'Pending',
             self::PARTIALLY_PAID => 'Partially Paid',
             self::PAID => 'Paid',
+            self::APPROVED => 'approved',
             self::CANCELLED => 'Cancelled',
         };
     }

@@ -15,13 +15,21 @@ class BookingIntentController extends Controller
             'end_date'   => ['required', 'date', 'after:start_date'],
         ]);
 
-        session([
-            'booking_intent' => [
-                'apartment_id' => $apartment->id,
-                'start_date'   => $request->start_date,
-                'end_date'     => $request->end_date,
-            ],
+        // session([
+        //     'booking_intent' => [
+        //         'apartment_id' => $apartment->id,
+        //         'start_date'   => $request->start_date,
+        //         'end_date'     => $request->end_date,
+        //     ],
+        // ]);
+
+        session()->put('booking.intent', [
+            'apartment_id' => $apartment->id,
+            'start_date'   => $request->start_date,
+            'end_date'     => $request->end_date,
         ]);
+
+        session()->save();
 
         //auth()->check()
         if (! Auth::check()) {
@@ -31,5 +39,15 @@ class BookingIntentController extends Controller
         }
 
         return redirect()->route('booking.confirm');
+    }
+
+    public function confirm()
+    {
+        $intent = session('booking.intent');
+        abort_if(! $intent, 404);
+        return view('booking.confirm', [
+            'apartment' => Apartment::findOrFail($intent['apartment_id']),
+            'intent'    => $intent,
+        ]);
     }
 }

@@ -2,8 +2,9 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Filament\Facades\Filament;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class RedirectAfterGuestAuth
 {
@@ -20,13 +21,37 @@ class RedirectAfterGuestAuth
      */
     public function handle(object $event): void
     {
-        // if (session()->has('booking_intent')) {
-        //     redirect()->route('booking.confirm')->send();
-        // }
-
-        // Only act for web users (guest panel)
-        if (auth()->guard('web')->check() && session()->has('booking_intent')) {
-            redirect()->route('booking.confirm')->send();
+        /*
+        // Only for frontend users
+        if (! auth()->guard('web')->check()) {
+            return;
         }
+
+        // Redis-safe: pull intent from previous session
+        $intent = session()->get('booking.intent');
+
+        if (! $intent) {
+            return;
+        }
+
+        // Re-store intent on the NEW session ID
+        session()->put('booking.intent', $intent);
+        session()->save();
+
+        redirect()->route('booking.confirm')->send();
+        */
+        if (! auth()->guard('web')->check()) {
+            return;
+        }
+
+        if (! session()->has('booking.intent')) {
+            return;
+        }
+
+        session()->save();
+
+        redirect()->to(
+            Filament::getPanel('guest')->getUrl() . '/continue-booking'
+        )->send();
     }
 }

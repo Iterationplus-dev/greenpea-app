@@ -16,10 +16,12 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'apartment_id',
+        'guest_name',
+        'guest_email',
         'discount_id',
         'start_date',
         'end_date',
-        // 'amount',
+        'amount',
         'total_amount',
         'discount_amount',
         'net_amount',
@@ -99,9 +101,15 @@ class Booking extends Model
             ->sum('amount');
     }
 
+    public function balanceAmount(): float
+    {
+        return max($this->amount - $this->paidAmount(), 0);
+    }
+
     public function isFullyPaid(): bool
     {
-        return $this->paidAmount() >= $this->net_amount;
+        // return $this->paidAmount() >= $this->net_amount;
+        return $this->balanceAmount() <= 0;
     }
 
     protected static function booted()

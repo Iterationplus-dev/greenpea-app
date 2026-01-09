@@ -63,4 +63,154 @@
         -ms-border-radius: 6px !important;
         -o-border-radius: 6px !important;
     }
+
+    h1.fi-simple-header-heading {
+        text-align: center;
+        font-size: 1.25rem;
+        line-height: 3.5rem;
+        font-family: 'Roboto';
+        font-weight: 600;
+    }
+
+    .fi-brand-name {
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+    }
+
+    /* table icon */
+    .fi-ta-icon:not(.fi-inline) {
+        padding-inline: calc(.25rem * 3);
+        padding-block: calc(var(--spacing) * 1);
+    }
+
+    .highlighted-row {
+        background-color: #f0fdfa !important;
+        box-shadow: 0 0 0 1.5px #10b981 !important;
+    }
+
+    /* Table rows height */
+
+    /* 1. Target the main table cell (<td>) element */
+    .fi-ta-cell {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* 2. Target the table header cell (<th>) for consistency */
+    .fi-ta-header-cell {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        font-size: 0.95rem !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    .custom-padding-right-column {
+        /* Set padding-right to 1.5rem (pr-6 equivalent) and force it */
+        padding-right: 3.2rem !important;
+    }
+
+    .custom-padding-left-column {
+        padding-left: .75rem !important;
+    }
+
+    .fi-ta-image:not(.fi-inline) {
+        padding-inline: calc(var(--spacing) * 1.5);
+        padding-block: calc(var(--spacing) * 1.5);
+    }
+
+    .fi-ta-image {
+        align-items: center;
+        width: 100%;
+        display: flex;
+        /* padding: 1px; */
+        margin: 0;
+    }
+
+    /* ToggleColumn */
+    .fi-toggle {
+        width: 2.70rem !important;
+        height: 1.30rem !important;
+    }
+
+    /* Target the internal switch track */
+    .fi-toggle .fi-toggle-track {
+        width: 0.95rem !important;
+        height: 0.55rem !important;
+        min-width: 0.25rem !important;
+        min-height: 0.25rem !important;
+    }
+
+    /* Target the internal thumb (the moving circle) */
+    .fi-toggle .fi-toggle-thumb {
+        /* Adjust thumb size relative to the new height */
+        width: 0.1px !important;
+        height: 0.1px !important;
+    }
+
+    .fi-ta-toggle.fi-align-center {
+        text-align: center;
+        padding-top: 0.5rem;
+        padding-bottom: 0;
+    }
+
+    /* heading */
+    .fi-header-heading {
+        font-size: 1.3rem !important;
+        line-height: 1.3rem !important;
+        font-family: 'Roboto', sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    @media (min-width: 640px) {
+        .fi-header-heading {
+            font-size: 0.5rem;
+            /* text-2xl */
+            line-height: 0.5rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .fi-header-heading {
+            font-size: 0.875rem;
+            /* text-3xl */
+            line-height: 0.875rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .fi-header-heading {
+            font-size: 1.5rem;
+            /* text-4xl */
+            line-height: 1.5rem;
+        }
+    }
+
+    /* table badge */
+    .fi-ta-text-item {
+        margin: 0 !important;
+        padding: .775rem !important;
+    }
+
+    .fi-badge {
+        justify-content: center;
+        align-items: center;
+        column-gap: calc(var(--spacing) * 1);
+        border-radius: var(--radius-md);
+        background-color: var(--gray-50);
+        min-width: 1.5rem;
+        padding-inline: calc(var(--spacing) * 1);
+        padding-block: calc(var(--spacing) * 1);
+        font-size: var(--text-xs);
+        line-height: var(--tw-leading, var(--text-xs--line-height));
+        --tw-font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-medium);
+        color: var(--gray-600);
+        --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        --tw-ring-color: var(--gray-600);
+        display: inline-flex;
+    }
 }

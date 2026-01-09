@@ -4,15 +4,74 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\Invoice;
+use Illuminate\Support\Str;
 use App\Models\BookingPayment;
 use Illuminate\Support\Facades\Http;
 
 class PaystackService
 {
-    public function __construct()
-    {
+    public function __construct() {}
 
+    /**
+     * Initialize a Paystack payment
+     *
+     * @param Booking $booking
+     * @param float $amount
+     * @param Invoice|null $invoice
+     */
+    public function initializePayment(
+        Booking $booking,
+        float $amount,
+        ?Invoice $invoice = null
+    ): BookingPayment {
+
+        $reference = $invoice?->reference ?? 'BK_' . Str::uuid();
+
+        // $email =
+        //     $booking->guest_email
+        //     ?? $booking->user?->email
+        //     ?? throw new \Exception('No email available for payment');
+
+        $email = $booking->guest_email
+            ?: $booking->user?->email;
+
+            // dd($booking->user);
+
+        if (! $email) {
+            throw new \RuntimeException(
+                "Cannot initialize payment: booking {$booking->id} has no email"
+            );
+        }
+
+
+        $response = Http::withToken(config('services.paystack.secret'))
+            ->post('https://api.paystack.co/transaction/initialize', [
+                'email' => $email,
+                'amount' => (int) ($amount * 100),
+                'reference' => $reference,
+                'callback_url' => route('paystack.callback'),
+                'metadata' => [
+                    'booking_id' => $booking->id,
+                    'invoice_id' => $invoice?->id,
+                ],
+            ])
+            ->throw()
+            ->json();
+
+        return BookingPayment::create([
+            'booking_id'     => $booking->id,
+            'amount'         => $amount,
+            'gateway'        => 'paystack',
+            'reference'      => $reference,
+            'status'         => 'pending',
+            'is_installment' => $invoice === null,
+            'response'       => $response['data'], // contains authorization_url
+        ]);
     }
+
+
+
+
     public function createBookingPayment(Booking $booking, Invoice $invoice)
     {
         $response = Http::withToken(config('services.paystack.secret'))
