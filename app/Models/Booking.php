@@ -26,6 +26,7 @@ class Booking extends Model
         'discount_amount',
         'net_amount',
         'status',
+        'reference'
     ];
 
     public function getActivitylogOptions(): LogOptions

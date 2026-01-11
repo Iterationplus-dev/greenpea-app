@@ -2,111 +2,158 @@
 
 namespace App\Services;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Booking;
 use App\Models\Invoice;
-use Cloudinary\Cloudinary;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class InvoiceService
 {
-    public static function generate(Booking $booking)
+    /**
+     * Create (or return existing) invoice for a booking
+     */
+    public function generateForBooking(Booking $booking): Invoice
     {
-        $invoice = Invoice::create([
-            'booking_id' => $booking->id,
-            'number' => 'INV-' . now()->format('Ymd') . '-' . $booking->id,
-            'amount' => $booking->net_amount,
-            'platform_fee' => $booking->platform_fee,
-            'net_amount' => $booking->owner_earning,
-        ]);
-
-        // $pdf = Pdf::loadView('pdf.invoice', compact('booking', 'invoice'));
-
-        // $pdf = Pdf::loadView(
-        //     'pdf.invoice',
-        //     compact('booking', 'invoice')
-        // )->setPaper('a4');
-
-        $pdf = Pdf::loadView('pdf.invoice', [
-            'booking' => $booking,
-            'invoice' => $invoice,
-        ]);
-
-        $cloudinary = new Cloudinary();
-        $upload = $cloudinary->uploadApi()->upload(
-            'data:application/pdf;base64,' . base64_encode($pdf->output()),
-            [
-                'folder' => 'invoices',
-                'public_id' => $invoice->number,
-                'resource_type' => 'raw', // IMPORTANT
-            ]
-        );
-
-        // $path = "invoices/{$invoice->invoice_number}.pdf";
-        // $path = "invoices/{$invoice->number}.pdf";
-
-        // Storage::put($path, $pdf->output());
-        // Storage::disk('public')->put($path, $pdf->output());
-
-        // $invoice->update(['pdf_path' => $path]);
-
-        $invoice->update([
-            'pdf_path' => $upload['secure_url'],
-            'pdf_public_id' => $upload['public_id'],
-        ]);
-
-        return $invoice;
-    }
-
-    //
-    public function createForBooking(Booking $booking): Invoice
-    {
-        // Idempotency: never create twice
         if ($booking->invoice) {
             return $booking->invoice;
         }
 
-        return Invoice::create([
-            'booking_id' => $booking->id,
-            'reference' => 'INV-' . Str::upper(Str::random(10)),
-            'amount' => $booking->amount,
-            'status' => 'unpaid',
-            'issued_at' => now(),
-        ]);
+        return DB::transaction(function () use ($booking) {
+
+            $platformFee = $this->calculatePlatformFee($booking->amount);
+
+            $invoice = Invoice::create([
+                'booking_id'    => $booking->id,
+                'number'     => $this->generateReference(),
+                'amount'        => $booking->amount,
+                'platform_fee'  => $platformFee,
+                'net_amount'    => $booking->amount - $platformFee,
+                'status'        => InvoiceStatus::PAID->value,
+                'issued_at'     => now(),
+            ]);
+
+            $pdfUrl = $this->generateAndUploadPdf($invoice, $booking);
+
+            $invoice->update([
+                'pdf_path' => $pdfUrl,
+            ]);
+
+            return $invoice;
+        });
     }
 
+    /**
+     * Generate invoice PDF and upload to Cloudinary
+     */
+    // protected function generateAndUploadPdf(
+    //     Invoice $invoice,
+    //     Booking $booking
+    // ): string {
+    //     // 1Generate PDF
+    //     $pdf = Pdf::loadView('pdf.invoice2', [
+    //         'invoice' => $invoice,
+    //         'booking' => $booking,
+    //     ])->setPaper('a4');
+
+    //     // Save temp file
+    //     $tmpPath = storage_path("app/tmp/invoice-{$invoice->reference}.pdf");
+    //     file_put_contents($tmpPath, $pdf->output());
+
+    //     // Upload to Cloudinary (RAW)
+    //     $upload = Cloudinary::uploadApi()->upload(
+    //         $tmpPath,
+    //         [
+    //             'resource_type' => 'raw',
+    //             'folder'        => 'invoices',
+    //             'public_id'     => $invoice->reference,
+    //             'overwrite'     => true,
+    //         ]
+    //     );
+
+    //     // Cleanup
+    //     @unlink($tmpPath);
+
+    //     return $upload['secure_url'];
+    // }
+
+    protected function generateAndUploadPdf(
+        Invoice $invoice,
+        Booking $booking
+    ): string {
+        // ✅ Ensure invoice reference exists
+        if (empty($invoice->reference)) {
+            $invoice->update([
+                'reference' => 'INV-' . strtoupper(Str::random(10)),
+            ]);
+        }
+
+        // ✅ Ensure tmp directory exists
+        $tmpDir = storage_path('app/tmp');
+        if (! is_dir($tmpDir)) {
+            mkdir($tmpDir, 0755, true);
+        }
+
+        // 1️⃣ Generate PDF
+        $pdf = Pdf::loadView('pdf.invoice2', [
+            'invoice' => $invoice,
+            'booking' => $booking,
+        ])->setPaper('a4');
+
+        // 2️⃣ Write temp file
+        $tmpPath = "{$tmpDir}/invoice-{$invoice->reference}.pdf";
+
+        file_put_contents($tmpPath, $pdf->output());
+
+        // 3️⃣ Upload to Cloudinary (RAW)
+        $upload = Cloudinary::uploadApi()->upload(
+            $tmpPath,
+            [
+                'resource_type' => 'raw',
+                'folder'        => 'invoices',
+                'public_id'     => $invoice->reference,
+                'overwrite'     => true,
+            ]
+        );
+
+        // 4️⃣ Cleanup temp file
+        @unlink($tmpPath);
+
+        return $upload['secure_url'];
+    }
+    /**
+     * Mark invoice as paid (idempotent)
+     */
     public function markAsPaid(Invoice $invoice): void
     {
-        if ($invoice->status === 'paid') {
+        if ($invoice->status === InvoiceStatus::PAID->value) {
             return;
         }
 
         $invoice->update([
-            'status' => 'paid',
+            'status'  => InvoiceStatus::PAID->value,
             'paid_at' => now(),
         ]);
     }
 
-    //
-    public function finalizeInvoice(Invoice $invoice)
+    /**
+     * Platform fee calculation (centralized)
+     */
+    protected function calculatePlatformFee(float $amount): float
     {
-        if ($invoice->pdf_url) {
-            return;
-        }
+        return round(
+            $amount * (setting('platform_fee_percentage') / 100),
+            2
+        );
+    }
 
-        // 1. Generate PDF
-        $pdfPath = app(PdfService::class)->generateInvoice($invoice);
-
-        // 2. Upload to Cloudinary
-        $url = app(CloudinaryService::class)->uploadInvoice($pdfPath);
-
-        // 3. Save URL
-        $invoice->update([
-            'pdf_url' => $url,
-        ]);
-
-        // 4. Email receipt
-        Mail::to($invoice->booking->user->email)
-            ->send(new PaymentReceiptMail($invoice));
+    /**
+     * Invoice reference generator
+     */
+    protected function generateReference(): string
+    {
+        return 'INV-' . Str::upper(Str::random(10));
     }
 }

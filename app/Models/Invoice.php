@@ -15,6 +15,7 @@ class Invoice extends Model
         'platform_fee',
         'net_amount',
         'pdf_path',
+        'issued_at',
         'pdf_public_id'
     ];
 
@@ -22,6 +23,8 @@ class Invoice extends Model
         'amount' => 'decimal:2',
         'platform_fee' => 'decimal:2',
         'net_amount' => 'decimal:2',
+        'issued_at' => 'datetime',
+        'paid_at'   => 'datetime',
     ];
 
     public function booking()

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Apartment extends Model
 {
@@ -66,6 +68,21 @@ class Apartment extends Model
                             $q->where('start_date', '<=', $start)
                                 ->where('end_date', '>=', $end);
                         });
+                });
+        });
+    }
+
+    public function scopeAvailableForDates(
+        Builder $query,
+        string $start,
+        string $end
+    ): Builder {
+        return $query->whereDoesntHave('bookings', function ($q) use ($start, $end) {
+            $q->whereNotIn('status', [BookingStatus::CANCELLED])
+                ->where(function ($overlap) use ($start, $end) {
+                    $overlap
+                        ->where('start_date', '<', $end)
+                        ->where('end_date', '>', $start);
                 });
         });
     }

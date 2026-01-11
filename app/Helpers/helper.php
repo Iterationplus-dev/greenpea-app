@@ -10,6 +10,19 @@ if (! function_exists('setting')) {
         return Setting::get($key, $default);
     }
 }
+if (! function_exists('platformFee')) {
+    function platformFee(float $amount)
+    {
+        $grossAmount = $amount;
+
+        $platformFee = round(
+            $grossAmount * (setting('platform_fee_percentage') / 100),
+            2
+        );
+
+        return $platformFee;
+    }
+}
 
 if (! function_exists('ownerId')) {
     function ownerId(): string

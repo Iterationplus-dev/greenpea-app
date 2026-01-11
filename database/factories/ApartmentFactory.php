@@ -21,7 +21,7 @@ class ApartmentFactory extends Factory
             'property_id' => Property::factory(),
             'name' => fake()->streetName,
             'description' => fake()->paragraph,
-            'monthly_price' => fake()->numberBetween(500000, 3000000),
+            'monthly_price' => fake()->numberBetween(50000, 100000),
             'bedrooms' => fake()->numberBetween(1, 5),
             'bathrooms' => fake()->numberBetween(1, 4),
         ];
