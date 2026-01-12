@@ -115,6 +115,7 @@ class InvoiceService
                 'folder'        => 'invoices',
                 'public_id'     => $invoice->reference,
                 'overwrite'     => true,
+                'access_mode'   => 'public',
             ]
         );
 

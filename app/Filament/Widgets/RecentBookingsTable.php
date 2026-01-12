@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RecentBookingsTable extends TableWidget
 {
+    protected static ?int $sort = 9;
     public function table(Table $table): Table
     {
         return $table

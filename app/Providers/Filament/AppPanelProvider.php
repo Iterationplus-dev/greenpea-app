@@ -59,8 +59,7 @@ class AppPanelProvider extends PanelProvider
             ->topBar(true)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                // AccountWidget::class,
-                // FilamentInfoWidget::class,
+
             ])
             // ->topbar(false)
             ->plugins([
@@ -85,8 +84,8 @@ class AppPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ]);
-            // ->authMiddleware([
-            //     Authenticate::class,
-            // ]);
+        // ->authMiddleware([
+        //     Authenticate::class,
+        // ]);
     }
 }

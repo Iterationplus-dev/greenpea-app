@@ -7,6 +7,7 @@ use Filament\Widgets\ChartWidget;
 class OwnerEarningsChart extends ChartWidget
 {
     protected ?string $heading = 'Owner Earnings Chart';
+    protected static ?int $sort = 9;
 
     protected function getData(): array
     {

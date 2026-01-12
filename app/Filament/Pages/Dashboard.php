@@ -2,9 +2,30 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
+use App\Filament\Widgets\Finance\BookingStatusChart;
+use App\Filament\Widgets\Finance\FinanceStats;
+use App\Filament\Widgets\Finance\MonthlyRevenueChart;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
-    protected string $view = 'filament-panels::filament.pages.dashboard';
+    public function getHeaderWidgets(): array
+    {
+        return [
+            FinanceStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int
+    {
+        return 4;
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            MonthlyRevenueChart::class,
+            BookingStatusChart::class,
+        ];
+    }
 }

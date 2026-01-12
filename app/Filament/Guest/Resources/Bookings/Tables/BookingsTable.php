@@ -71,7 +71,7 @@ class BookingsTable
                         default => 'gray',
                     }),
             ])
-
+            ->recordActionsColumnLabel('Actions')
             /* ---------------------------------
              | RECORD ACTIONS
              |---------------------------------*/
@@ -170,7 +170,8 @@ class BookingsTable
                 Action::make('invoice')
                     ->label('Invoice')
                     ->icon('heroicon-o-document-arrow-down')
-                    ->url(fn($record) => $record->invoice?->pdf_url)
+                    // ->url(fn($record) => $record->invoice?->pdf_url)
+                    ->url(fn($record) => $record->invoice->pdf_url)
                     ->openUrlInNewTab()
                     ->visible(fn($record) => $record->invoice !== null),
 
