@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Bookings;
 
+use App\Enums\GroupLabel;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Booking;
@@ -20,7 +21,7 @@ class BookingResource extends Resource
     protected static ?string $model = Booking::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
-    protected static string | UnitEnum | null $navigationGroup = 'Bookings';
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::BOOKINGS;
     protected static ?string $navigationLabel = 'Manage Bookings';
     protected static ?int $navigationSort = 1;
 
@@ -41,7 +42,7 @@ class BookingResource extends Resource
             return $query;
         }
 
-        
+
         // Property owners only see bookings for their properties
         if ($admin->type->value === 'owner') {
             $query->whereHas('apartment.property', fn ($q) =>

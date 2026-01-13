@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Apartments;
 use UnitEnum;
 use BackedEnum;
 use App\Enums\UserRole;
+use App\Enums\GroupLabel;
 use App\Models\Apartment;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
@@ -21,10 +22,11 @@ class ApartmentResource extends Resource
 {
     protected static ?string $model = Apartment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
     protected static ?string $navigationLabel = 'Apartments';
-    protected static string|UnitEnum|null $navigationGroup = 'Properties';
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT->value;
+    protected static ?string $recordTitleAttribute = 'apartment';
+    protected static ?int $navigationSort = 1;
 
 
     /**

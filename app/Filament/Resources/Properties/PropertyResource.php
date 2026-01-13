@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Properties;
 
+use App\Enums\GroupLabel;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Property;
@@ -20,11 +21,11 @@ class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHomeModern;
     // protected static ?string $navigationGroup = 'Properties';
-    protected static string | UnitEnum | null $navigationGroup = 'Properties';
-    protected static ?string $navigationLabel = 'Manage Properties';
-    protected static ?int $navigationSort = 2;
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::FACILITYMGT->value;
+    protected static ?string $navigationLabel = 'Properties';
+    protected static ?int $navigationSort = 0;
 
     protected static ?string $recordTitleAttribute = 'property';
 

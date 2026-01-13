@@ -19,11 +19,11 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'System';
+    protected static string|UnitEnum|null $navigationGroup = 'System Management';
     protected static ?string $navigationLabel = 'Manage Roles';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     /**
      * Only Super Admins can manage roles

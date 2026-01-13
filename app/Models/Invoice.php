@@ -16,6 +16,7 @@ class Invoice extends Model
         'net_amount',
         'pdf_path',
         'issued_at',
+        'status',
         'pdf_public_id'
     ];
 
