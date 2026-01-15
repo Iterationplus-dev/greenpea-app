@@ -49,7 +49,7 @@ class GuestPanelProvider extends PanelProvider
             )
             ->discoverPages(
                 in: app_path('Filament/Guest/Pages'),
-                for: 'App\Filament\Guest\Pages'
+                for: 'App\\Filament\\Guest\\Pages'
             )
             ->pages([
                 Dashboard::class,

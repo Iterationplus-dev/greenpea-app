@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\WalletTransactions;
 
+use App\Enums\GroupLabel;
 use App\Enums\UserRole;
 use UnitEnum;
 use BackedEnum;
@@ -22,7 +23,7 @@ class WalletTransactionResource extends Resource
     protected static ?string $model = WalletTransaction::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
-    protected static string | UnitEnum | null $navigationGroup = 'Finance';
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::FINANCE->value;
     protected static ?string $navigationLabel = 'Wallet Transactions';
     protected static ?int $navigationSort = 2;
 
@@ -37,10 +38,9 @@ class WalletTransactionResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (! auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value, UserRole::ADMIN->value])) {
-            $query->where('user_id', auth()->id());
-        }
-
+    //    if (admin()?->isSuper() || admin()?->canManageFinance()) {
+    //         $query->where('user_id', auth()->id());
+    //     }
         return $query;
     }
 

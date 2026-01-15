@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\BookingIntentController;
 use App\Http\Controllers\BookingPaymentController;
 use App\Http\Controllers\PaystackCallbackController;
@@ -31,3 +32,10 @@ Route::get('/bookings/{booking}/pay', [BookingPaymentController::class, 'pay'])
     ->name('bookings.pay');
 Route::get('/payments/paystack/callback', [PaystackCallbackController::class, 'handle'])
     ->name('paystack.callback');
+
+
+Route::get('/wallet/paystack/init', [WalletController::class, 'init'])
+    ->name('wallet.paystack.init');
+
+Route::get('/wallet/paystack/callback', [WalletController::class, 'callback'])
+    ->name('wallet.paystack.callback');

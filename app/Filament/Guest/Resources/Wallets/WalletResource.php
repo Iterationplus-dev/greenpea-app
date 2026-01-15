@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Wallets;
+namespace App\Filament\Guest\Resources\Wallets;
 
 use UnitEnum;
 use BackedEnum;
@@ -11,11 +11,12 @@ use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Wallets\Pages\EditWallet;
-use App\Filament\Resources\Wallets\Pages\ListWallets;
-use App\Filament\Resources\Wallets\Pages\CreateWallet;
-use App\Filament\Resources\Wallets\Schemas\WalletForm;
-use App\Filament\Resources\Wallets\Tables\WalletsTable;
+use App\Filament\Guest\Resources\Wallets\Pages\EditWallet;
+use App\Filament\Guest\Resources\Wallets\Pages\ListWallets;
+use App\Filament\Guest\Resources\Wallets\Pages\CreateWallet;
+use App\Filament\Guest\Resources\Wallets\Schemas\WalletForm;
+use App\Filament\Guest\Resources\Wallets\Tables\WalletsTable;
+use App\Filament\Guest\Resources\Wallets\RelationManagers\TransactionsRelationManager;
 
 class WalletResource extends Resource
 {
@@ -23,13 +24,31 @@ class WalletResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
     protected static string | UnitEnum | null $navigationGroup = GroupLabel::FINANCE->value;
-    protected static ?string $recordTitleAttribute = 'Wallet';
+    protected static ?string $navigationLabel = 'My Wallet';
 
+    protected static ?string $recordTitleAttribute = 'wallet';
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery();
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return WalletForm::configure($schema);
@@ -43,7 +62,7 @@ class WalletResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class,
         ];
     }
 

@@ -48,7 +48,7 @@ class AppPanelProvider extends PanelProvider
             ->favicon(asset('img/greenpea-favicon.png'))
             ->font('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
             ])

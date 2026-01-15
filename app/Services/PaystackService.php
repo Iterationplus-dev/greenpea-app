@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Wallet;
 use App\Models\Booking;
 use App\Models\Invoice;
 use Illuminate\Support\Str;
 use App\Models\BookingPayment;
+use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\Http;
 
 class PaystackService
@@ -35,7 +37,7 @@ class PaystackService
         $email = $booking->guest_email
             ?: $booking->user?->email;
 
-            // dd($booking->user);
+        // dd($booking->user);
 
         if (! $email) {
             throw new \RuntimeException(
@@ -99,5 +101,61 @@ class PaystackService
             'is_installment' => false,
             'response' => $data, // includes authorization_url
         ]);
+    }
+
+    // Wallet
+    /**
+     * Initialize a Paystack wallet funding
+     */
+
+    public function initializeWalletFunding(float $amount, int $userId): array
+    {
+        $wallet = Wallet::firstOrCreate([
+            'user_id' => $userId,
+        ]);
+
+        $reference = 'WL_' . Str::uuid();
+
+        $transaction = WalletTransaction::create([
+            'wallet_id' => $wallet->id,
+            'amount' => $amount,
+            'type' => 'credit',
+            'reference' => $reference,
+            'description' => 'Wallet funding via Paystack',
+        ]);
+
+        $email = $wallet->user->email;
+
+        $response = Http::withToken(config('services.paystack.secret'))
+            ->post('https://api.paystack.co/transaction/initialize', [
+                'email' => $email,
+                'amount' => (int) ($amount * 100),
+                'reference' => $reference,
+                'callback_url' => route('wallet.paystack.callback'),
+                'metadata' => [
+                    'wallet_id' => $wallet->id,
+                    'wallet_transaction_id' => $transaction->id,
+                    'type' => 'wallet',
+                ],
+            ])
+            ->throw()
+            ->json();
+
+        return [
+            'transaction' => $transaction,
+            'authorization_url' => $response['data']['authorization_url'],
+        ];
+    }
+
+
+    /**
+     * Verify any Paystack transaction (Booking or Wallet)
+     */
+    public function verify(string $reference): array
+    {
+        return Http::withToken(config('services.paystack.secret'))
+            ->get("https://api.paystack.co/transaction/verify/{$reference}")
+            ->throw()
+            ->json('data');
     }
 }
