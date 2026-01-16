@@ -71,4 +71,6 @@ class BookingResource extends Resource
             'view' => ViewBooking::route('/{record}'),
         ];
     }
+
+    
 }

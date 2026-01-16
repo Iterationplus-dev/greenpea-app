@@ -18,11 +18,15 @@ class EditWallet extends EditRecord
 
             Action::make('fund')
                 ->label('Fund Wallet')
-                ->icon('heroicon-o-banknotes')
+                ->icon('heroicon-o-wallet')
+                ->size('sm')
+                ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
+                ->modalSubmitActionLabel('Fund Wallet')
+                ->modalWidth('sm')
                 ->schema([
                     TextInput::make('amount')
                         ->numeric()
-                        ->minValue(100)
+                        ->minValue(5000)
                         ->required(),
                 ])
                 ->action(
@@ -44,5 +48,10 @@ class EditWallet extends EditRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return "My Wallet";
     }
 }

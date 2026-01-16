@@ -2,6 +2,7 @@
 
 namespace App\Filament\Guest\Resources\Wallets\RelationManagers;
 
+use App\Enums\WalletTransType;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Actions\EditAction;
@@ -20,7 +21,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 class TransactionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'transactions';
-    protected static ?string $title = 'My Wallet Transactions';
+    protected static ?string $title = 'Wallet Transactions';
 
 
 
@@ -53,14 +54,25 @@ class TransactionsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('type')
                     ->badge()
-                    ->colors([
-                        'success' => 'credit',
-                        'danger' => 'debit',
+                    ->color(fn(string $state) => match ($state) {
+                        WalletTransType::CREDIT->value => 'success',
+                        WalletTransType::DEBIT->value => 'danger',
+                        default => 'gray',
+                    })
+                    ->icon(fn(string $state) => match ($state) {
+                        WalletTransType::CREDIT->value => 'heroicon-o-check-circle',
+                        WalletTransType::DEBIT->value => 'heroicon-o-x-circle',
+                        default => 'heroicon-o-question-mark-circle',
+                    })
+                    ->extraAttributes([
+                        // 'class' => 'px-2 py-0.5 text-xs rounded-md',
+                         'class' => 'px-1.5 py-0.1 text-[10px] rounded',
                     ]),
 
                 TextColumn::make('amount')
                     ->money('NGN')
-                    ->weight('bold'),
+                    ->weight('bold')
+                    ->alignLeft(),
 
                 TextColumn::make('reference')
                     ->copyable()

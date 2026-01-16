@@ -11,7 +11,7 @@ class WalletForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('My Wallet')
+            Section::make('Summary')
                 ->description('Your current available wallet balance')
                 ->schema([
                     TextInput::make('balance')
@@ -20,9 +20,10 @@ class WalletForm
                         ->disabled()
                         ->extraAttributes([
                             'class' => 'text-xl font-bold',
-                        ]),
-                ])
-                ->columnSpanFull(),
+                        ])
+                        ->formatStateUsing(fn($record) => number_format($record->balance, 2))
+                        ->columns(1),
+                ])->columnSpanFull(),
         ]);
     }
 }

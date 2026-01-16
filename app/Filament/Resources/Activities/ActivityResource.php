@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Activities;
 
+use App\Enums\GroupLabel;
 use BackedEnum;
 use UnitEnum;
 use Filament\Resources\Resource;
@@ -18,7 +19,7 @@ class ActivityResource extends Resource
     protected static ?string $model = Activity::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
-    protected static string|UnitEnum|null $navigationGroup = 'System Management';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'Activity Logs';
     protected static ?int $navigationSort = 9;
 

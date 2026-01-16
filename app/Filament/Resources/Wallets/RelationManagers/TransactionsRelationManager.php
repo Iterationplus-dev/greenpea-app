@@ -51,7 +51,9 @@ class TransactionsRelationManager extends RelationManager
 
                 TextColumn::make('amount')
                     ->money('NGN')
-                    ->weight('bold'),
+                    ->weight('bold')
+                    ->alignLeft()
+                    ->extraAttributes(['class' => 'custom-padding-left-column']),
 
                 TextColumn::make('reference')
                     ->copyable()

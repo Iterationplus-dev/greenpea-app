@@ -29,7 +29,12 @@ class WalletTransactionResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'WalletTransaction';
 
-     public static function canCreate(): bool
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public static function canCreate(): bool
     {
         return false;
     }
@@ -38,9 +43,9 @@ class WalletTransactionResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-    //    if (admin()?->isSuper() || admin()?->canManageFinance()) {
-    //         $query->where('user_id', auth()->id());
-    //     }
+        //    if (admin()?->isSuper() || admin()?->canManageFinance()) {
+        //         $query->where('user_id', auth()->id());
+        //     }
         return $query;
     }
 

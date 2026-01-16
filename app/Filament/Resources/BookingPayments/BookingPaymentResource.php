@@ -2,25 +2,29 @@
 
 namespace App\Filament\Resources\BookingPayments;
 
-use App\Filament\Resources\BookingPayments\Pages\CreateBookingPayment;
+use BackedEnum;
+use UnitEnum;
+use App\Enums\GroupLabel;
+use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use App\Models\BookingPayment;
+use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\BookingPayments\Pages\EditBookingPayment;
 use App\Filament\Resources\BookingPayments\Pages\ListBookingPayments;
+use App\Filament\Resources\BookingPayments\Pages\CreateBookingPayment;
 use App\Filament\Resources\BookingPayments\Schemas\BookingPaymentForm;
 use App\Filament\Resources\BookingPayments\Tables\BookingPaymentsTable;
-use App\Models\BookingPayment;
-use BackedEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
 
 class BookingPaymentResource extends Resource
 {
     protected static ?string $model = BookingPayment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::BOOKINGS;
 
     protected static ?string $recordTitleAttribute = 'BookingPayment';
+     protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

@@ -7,4 +7,9 @@ use Filament\Pages\Page;
 class RevenueReport extends Page
 {
     protected string $view = 'filament-panels::filament.pages.revenue-report';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

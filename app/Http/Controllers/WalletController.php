@@ -40,7 +40,7 @@ class WalletController extends Controller
         $transaction = WalletTransaction::where('reference', $reference)->firstOrFail();
         $wallet = $transaction->wallet;
         // Prevent double-credit
-        if ($transaction->description === 'Wallet funded via Paystack (confirmed)') {
+        if ($transaction->description === 'Wallet funded via Paystack') {
             return redirect()->route(
                 'filament.guest.resources.wallets.edit',
                 ['record' => $wallet->id]
@@ -50,7 +50,7 @@ class WalletController extends Controller
         $wallet->increment('balance', $transaction->amount);
 
         $transaction->update([
-            'description' => 'Wallet funded via Paystack (confirmed)',
+            'description' => 'Wallet funded via Paystack',
         ]);
 
         return redirect()->route(
@@ -58,30 +58,6 @@ class WalletController extends Controller
             ['record' => $wallet->id]
         )->with('success', 'Wallet funded successfully');
 
-        // Old
 
-        // if ($data['metadata']['type'] === 'wallet') {
-        //     $transaction = WalletTransaction::where('reference', $reference)->firstOrFail();
-
-        //     // Prevent double-credit
-        //     if ($transaction->wallet->transactions()
-        //         ->where('reference', $reference)
-        //         ->where('type', 'credit')
-        //         ->exists()
-        //     ) {
-        //         return redirect()->route('filament.guest.resources.wallets.edit', [
-        //             'record' => $transaction->wallet_id,
-        //         ]);
-        //     }
-
-        //     $transaction->wallet->credit(
-        //         $transaction->amount,
-        //         'Wallet funded via Paystack'
-        //     );
-        // }
-
-        // return redirect()->route('filament.guest.resources.wallets.edit', [
-        //     'record' => $transaction->wallet_id,
-        // ]);
     }
 }

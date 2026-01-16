@@ -38,12 +38,13 @@ class WalletTransactionsTable
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('type')
                     ->badge()
-                    ->color(fn(WalletTransType $state) => match ($state) {
-                        WalletTransType::CREDIT => "success",
-                        WalletTransType::DEBIT => "danger",
+
+                    ->color(fn($state) => match (WalletTransType::tryFrom($state)) {
+                        WalletTransType::CREDIT => 'success',
+                        WalletTransType::DEBIT => 'danger',
                         default => 'gray',
                     })
-                    ->icon(fn(WalletTransType $state) => match ($state) {
+                    ->icon(fn($state) => match (WalletTransType::tryFrom($state)) {
                         WalletTransType::CREDIT => 'heroicon-o-plus-circle',
                         WalletTransType::DEBIT => 'heroicon-o-minus-circle',
                         default => null,

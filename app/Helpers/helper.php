@@ -2,6 +2,7 @@
 
 use App\Models\Admin;
 use App\Models\Setting;
+use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
 
 if (! function_exists('setting')) {
@@ -54,5 +55,13 @@ if (! function_exists('tableDeleteRecordNotification')) {
             ->success()
             ->title($title . ' Deleted')
             ->body($title . ' details deleted successfully');
+    }
+}
+
+
+if (! function_exists('walletReference')) {
+    function walletReference(): string
+    {
+        return 'WL_' . Str::uuid();
     }
 }

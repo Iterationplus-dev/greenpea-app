@@ -24,10 +24,10 @@ class BookingPaymentObserver
 
             $booking = $bookingPayment->booking()->lockForUpdate()->first();
 
-            // 1️⃣ Dispatch payment received event
+            //Dispatch payment received event
             event(new PaymentReceived($bookingPayment));
 
-            // 2️⃣ Update booking payment status
+            //Update booking payment status
             $paidAmount = $booking->paidAmount();
 
             if ($paidAmount >= $booking->net_amount) {
@@ -36,7 +36,7 @@ class BookingPaymentObserver
                 if ($booking->status !== PaymentStatus::PAID) {
                     $booking->update(['status' => PaymentStatus::PAID]);
 
-                    // 3️⃣ Dispatch booking paid event (ONLY ONCE)
+                    //Dispatch booking paid event (ONLY ONCE)
                     event(new BookingPaid($booking));
                 }
             } else {

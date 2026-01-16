@@ -31,6 +31,7 @@ class WalletResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->with('transactions')
             ->where('user_id', auth()->id());
     }
 

@@ -38,16 +38,24 @@ class WalletsTable
                     ->label('Balance')
                     ->money('NGN')
                     ->sortable()
-                    // ->color(fn ($state) => $state > 0 ? 'success' : 'gray')
-                    ->weight('bold'),
+                    ->color(fn ($state) => $state > 0 ? 'success' : 'gray')
+                    ->weight('bold')
+                    ->formatStateUsing(fn ($record) => '₦' . number_format($record->balance, 2))
+                    ->alignRight(),
 
                 TextColumn::make('transactions_count')
                     ->counts('transactions')
-                    ->label('Transactions')
-                    ->sortable(),
+                    ->label('Trans')
+                    ->sortable()
+                    ->badge()
+                    ->alignCenter()
+                     ->extraAttributes([
+                        // 'class' => 'px-2 py-0.5 text-xs rounded-md',
+                         'class' => 'px-1.5 py-0.5 text-[11px] rounded',
+                    ]),
 
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Date')
                     ->dateTime()
                     ->toggleable(),
 

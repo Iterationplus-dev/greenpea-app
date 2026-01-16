@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Settings;
 
+use App\Enums\GroupLabel;
 use App\Filament\Resources\Settings\Pages\CreateSetting;
 use App\Filament\Resources\Settings\Pages\EditSetting;
 use App\Filament\Resources\Settings\Pages\ListSettings;
@@ -20,7 +21,7 @@ class SettingResource extends Resource
     protected static ?string $model = Setting::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
-    protected static string | UnitEnum | null $navigationGroup = 'System Management';
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'General Settings';
     protected static ?int $navigationSort = 10;
 

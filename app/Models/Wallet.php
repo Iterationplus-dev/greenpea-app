@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WalletTransType;
 use Illuminate\Database\Eloquent\Model;
 
 class Wallet extends Model
@@ -13,9 +14,18 @@ class Wallet extends Model
         'balance',
     ];
 
-    protected $casts = [
-        'balance' => 'decimal:2',
-    ];
+    // protected $casts = [
+    //     'balance' => 'decimal:2',
+    // ];
+
+    public function getBalanceAttribute(): float
+    {
+        return $this->transactions->sum(function ($t) {
+            return $t->type === 'credit'
+                ? $t->amount
+                : -$t->amount;
+        });
+    }
 
     public function user()
     {
@@ -27,28 +37,30 @@ class Wallet extends Model
         return $this->hasMany(WalletTransaction::class);
     }
     //
-    public function credit(float $amount, string $description = null): void
+    public function credit(float $amount, ?string $description = null): void
     {
-        $this->increment('balance', $amount);
+        // $this->increment('balance', $amount);
 
         $this->transactions()->create([
             'amount' => $amount,
-            'type' => 'credit',
+            'type' => WalletTransType::CREDIT->value,
+            'reference' => walletReference(),
             'description' => $description,
         ]);
     }
 
-    public function debit(float $amount, string $description = null): void
+    public function debit(float $amount, ?string $description = null): void
     {
         if ($amount > $this->balance) {
             throw new \RuntimeException('Insufficient wallet balance');
         }
 
-        $this->decrement('balance', $amount);
+        // $this->decrement('balance', $amount);
 
         $this->transactions()->create([
             'amount' => $amount,
-            'type' => 'debit',
+            'type' => WalletTransType::DEBIT,
+            'reference' => walletReference(),
             'description' => $description,
         ]);
     }

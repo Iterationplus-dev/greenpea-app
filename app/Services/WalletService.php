@@ -19,7 +19,7 @@ class WalletService
     {
         $wallet = $user->wallet()->firstOrCreate([]);
 
-        $wallet->increment('balance', $amount);
+        // $wallet->increment('balance', $amount);
 
         $wallet->transactions()->create([
             'amount' => $amount,
@@ -34,7 +34,7 @@ class WalletService
 
         throw_if($wallet->balance < $amount, 'Insufficient balance');
 
-        $wallet->decrement('balance', $amount);
+        // $wallet->decrement('balance', $amount);
 
         $wallet->transactions()->create([
             'amount' => $amount,
@@ -58,14 +58,14 @@ class WalletService
 
         return DB::transaction(function () use ($booking, $amount, $user) {
 
-            // 1️⃣ Debit wallet
+            //Debit wallet
             self::debit(
                 $user,
                 $amount,
                 "Wallet payment for booking #{$booking->id}"
             );
 
-            // 2️⃣ Record booking payment
+            //Record booking payment
             $payment = BookingPayment::create([
                 'booking_id' => $booking->id,
                 'amount' => $amount,
@@ -75,7 +75,7 @@ class WalletService
                 'response' => null,
             ]);
 
-            // 3️⃣ Auto-approve if fully paid
+            //Auto-approve if fully paid
             if ($booking->isFullyPaid()) {
                 $booking->update(['status' => 'approved']);
             }

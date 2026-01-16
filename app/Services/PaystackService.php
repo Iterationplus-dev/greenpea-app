@@ -114,7 +114,7 @@ class PaystackService
             'user_id' => $userId,
         ]);
 
-        $reference = 'WL_' . Str::uuid();
+        $reference = walletReference();
 
         $transaction = WalletTransaction::create([
             'wallet_id' => $wallet->id,

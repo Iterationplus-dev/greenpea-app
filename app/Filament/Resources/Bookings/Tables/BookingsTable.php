@@ -44,7 +44,7 @@ class BookingsTable
                 CreateAction::make(),
             ])
             ->paginatedWhileReordering()
-            ->deferLoading()
+
             ->columns([
                 TextColumn::make('reference')
                     ->searchable()
@@ -81,6 +81,7 @@ class BookingsTable
                     ->date()
                     ->label('Date'),
             ])
+            ->deferLoading()
             ->filters([
                 //
             ])

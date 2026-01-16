@@ -80,10 +80,20 @@
     /* Table rows height */
 
     /* 1. Target the main table cell (<td>) element */
-    .fi-ta-cell {
+    /* .fi-ta-cell {
         padding-top: 0 !important;
         padding-bottom: 0 !important;
         font-size: 0.95rem !important;
+    } */
+
+    /* .fi-ta-table {
+        font-size: 0.75rem;
+    } */
+
+    .fi-ta-table td,
+    .fi-ta-table th {
+        padding-top: 0.15rem;
+        padding-bottom: 0.15rem;
     }
 
     /* 2. Target the table header cell (<th>) for consistency */
