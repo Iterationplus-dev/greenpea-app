@@ -23,21 +23,21 @@ class RecentBookingsTable extends TableWidget
             ->query(
                 fn(): Builder => Booking::query()
                     ->latest()
-                    ->limit(4)
+                    ->limit(7)
             )
             ->striped()
             ->poll('60s')
             ->paginated(false)
             ->defaultSort('created_at', 'desc')
             ->extraAttributes([
-                 'class' => 'recent-bookings-compact',
+                'class' => 'recent-bookings-compact',
             ])
             ->columns([
                 TextColumn::make('reference')
                     ->label('Ref#')
                     ->size('sm')
                     ->weight('medium')
-                    ->formatStateUsing(fn ($state) => substr($state, -6)),
+                    ->formatStateUsing(fn($state) => substr($state, -5)),
 
                 // TextColumn::make('user.name')
                 //     ->label('Guest')
@@ -48,12 +48,12 @@ class RecentBookingsTable extends TableWidget
                 TextColumn::make('apartment.name')
                     ->label('Apartment')
                     ->size('sm')
-                    ->limit(18),
+                    ->limit(15),
 
-                TextColumn::make('start_date')
-                    ->label('In')
-                    ->date('d M')
-                    ->size('sm'),
+                // TextColumn::make('start_date')
+                //     ->label('In')
+                //     ->date('d M')
+                //     ->size('sm'),
 
                 TextColumn::make('end_date')
                     ->label('Out')
@@ -61,17 +61,17 @@ class RecentBookingsTable extends TableWidget
                     ->size('sm'),
 
                 TextColumn::make('total_amount')
-                    ->label('Amt')
-                    ->money('NGN')
+                    ->label('Amount')
+                    // ->money('NGN')
                     ->size('sm')
-                    ->alignEnd(),
-
-
+                    ->alignEnd()
+                    ->formatStateUsing(fn($state) => number_format($state, 2)),
 
                 TextColumn::make('created_at')
                     ->label('Date')
                     ->since()
-                    ->size('sm'),
+                    ->size('sm')
+                    ->alignCenter(),
 
             ])
             ->filters([
@@ -84,11 +84,8 @@ class RecentBookingsTable extends TableWidget
                 Action::make('view')
                     ->icon('heroicon-o-eye')
                     ->iconButton()
-                    ->url(
-                        fn(Booking $record) =>
-                        BookingResource::getUrl('view', ['record' => $record])
-                    )
-                    ->openUrlInNewTab(),
+                    ->size('sm')
+                    ->url(fn(Booking $record) => BookingResource::getUrl('view', ['record' => $record])),
             ])
 
             ->emptyStateHeading('No recent bookings')

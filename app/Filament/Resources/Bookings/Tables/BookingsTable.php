@@ -25,7 +25,7 @@ class BookingsTable
         $admin = auth('admin')->user();
         return $table
             ->striped()
-            ->defaultSort('name', 'asc')
+            ->defaultSort('created_at', 'asc')
             // ->modifyQueryUsing(fn(Builder $query) => $query)
             ->modifyQueryUsing(function (Builder $query) {
                 $admin = auth('admin')->user();
@@ -36,7 +36,6 @@ class BookingsTable
                     });
                 }
             })
-
             ->emptyStateIcon('heroicon-o-calendar-days')
             ->emptyStateHeading('No bookings found!')
             ->emptyStateDescription('You don\'t have bookings yet. Click the button to add a booking.')
@@ -62,20 +61,29 @@ class BookingsTable
                     ->alignRight()
                     ->extraAttributes(['class' => 'custom-padding-right-column']),
                 TextColumn::make('status')
-                    ->badge()
-                    ->color(fn(BookingStatus $state) => match ($state) {
-                        BookingStatus::APPROVED => "success",
-                        BookingStatus::PENDING => "warning",
-                        BookingStatus::CANCELLED => "danger",
-                        BookingStatus::REFUNDED => "info",
-                        default => 'gray',
+                    // ->badge()
+                    ->alignCenter()
+                    ->color(function ($state) {
+                        $state = $state instanceof BookingStatus ? $state : BookingStatus::from($state);
+
+                        return match ($state) {
+                            BookingStatus::APPROVED => "success",
+                            BookingStatus::PENDING => "warning",
+                            BookingStatus::CANCELLED => "danger",
+                            BookingStatus::REFUNDED => "info",
+                            default => 'gray',
+                        };
                     })
-                    ->icon(fn(BookingStatus $state) => match ($state) {
-                        BookingStatus::APPROVED => 'heroicon-o-check-circle',
-                        BookingStatus::PENDING => 'heroicon-o-arrow-path',
-                        BookingStatus::REFUNDED => 'heroicon-o-arrow-uturn-left',
-                        BookingStatus::CANCELLED => 'heroicon-o-times',
-                        default => null,
+                    ->icon(function ($state) {
+                        $state = $state instanceof BookingStatus ? $state : BookingStatus::from($state);
+
+                        return match ($state) {
+                            BookingStatus::APPROVED => 'heroicon-o-check-circle',
+                            BookingStatus::PENDING => 'heroicon-o-arrow-path',
+                            BookingStatus::REFUNDED => 'heroicon-o-arrow-uturn-left',
+                            BookingStatus::CANCELLED => 'heroicon-o-times',
+                            default => null,
+                        };
                     }),
                 TextColumn::make('created_at')
                     ->date()
@@ -147,7 +155,7 @@ class BookingsTable
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

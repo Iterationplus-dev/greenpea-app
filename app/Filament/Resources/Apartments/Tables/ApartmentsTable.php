@@ -72,7 +72,7 @@ class ApartmentsTable
                     : null
             )
 
-            ->recordActionsColumnLabel('Manage')
+            ->recordActionsColumnLabel('Action')
             ->recordActions([
                 ActionGroup::make([
                     DeleteAction::make()
@@ -83,6 +83,7 @@ class ApartmentsTable
                                 ->title('Apartment Deleted')
                                 ->body('The apartment details deleted successfully')
                         ),
+
                     EditAction::make()
                         ->icon('heroicon-o-pencil-square')
                         ->label('Manage')
@@ -90,12 +91,13 @@ class ApartmentsTable
                         ->modalHeading('Edit Apartment')
                         ->color('info'),
                 ])
+                    ->icon('heroicon-o-ellipsis-vertical')
             ])
 
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                    ->chunkSelectedRecords(10),
+                        ->chunkSelectedRecords(10),
                 ]),
             ]);
     }

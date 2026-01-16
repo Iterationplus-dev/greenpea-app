@@ -20,7 +20,8 @@ class InvoicesTable
                     ->label('Invoice #')
                     ->searchable()
                     ->sortable()
-                    ->copyable(),
+                    ->copyable()
+                    ->limit(8),
 
                 TextColumn::make('booking.reference')
                     ->label('Booking')
@@ -40,22 +41,24 @@ class InvoicesTable
 
                 TextColumn::make('platform_fee')
                     ->label('Platform Fee')
-                    ->money('NGN')
+                    // ->money('NGN')
                     ->color('info')
                     ->sortable()
                     ->alignRight()
-                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+                    ->extraAttributes(['class' => 'custom-padding-right-column'])
+                    ->formatStateUsing(fn($state) => number_format($state,2)),
 
                 TextColumn::make('owner_amount')
                     ->label('Owner Earns')
-                    ->money('NGN')
+                    // ->money('NGN')
                     ->color('success')
                     ->alignRight()
                     ->getStateUsing(fn ($record) => abs($record->amount - $record->platform_fee))
-                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+                    ->extraAttributes(['class' => 'custom-padding-right-column'])
+                    ->formatStateUsing(fn($state) => number_format($state,2)),
 
                 TextColumn::make('status')
-                    ->badge()
+                    // ->badge()
                     ->colors([
                         'gray' => 'unpaid',
                         'success' => 'paid',

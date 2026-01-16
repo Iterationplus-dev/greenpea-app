@@ -13,10 +13,11 @@ class ListApartmentImages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-
-                ->size('sm')
-                ->extraAttributes(['class' => 'text-xs px-3 py-1.5']),
+            // CreateAction::make()
+            //     ->icon('heroicon-o-plus-circle')
+            //     ->size('sm')
+            //     ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
+            //     ->label('Apartment Image')
         ];
     }
 }

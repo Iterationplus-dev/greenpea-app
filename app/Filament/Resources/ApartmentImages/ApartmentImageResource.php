@@ -21,10 +21,15 @@ class ApartmentImageResource extends Resource
     protected static ?string $model = ApartmentImage::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
-     protected static ?string $navigationLabel = 'Apartment Images';
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT->value;
+    protected static ?string $navigationLabel = 'Apartment Images';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT;
     protected static ?string $recordTitleAttribute = 'apartment-image';
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::FACILITYMGT->value);
+    }
 
     public static function form(Schema $schema): Schema
     {

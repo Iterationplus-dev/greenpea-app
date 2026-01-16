@@ -50,6 +50,10 @@ class ApartmentImagesTable
             ])
             ->reorderable('sort_order')
             ->defaultSort('sort_order')
+
+            ->emptyStateHeading('No Apartment Images')
+            ->emptyStateDescription('Apartment images will appear here automatically.')
+            ->emptyStateIcon('heroicon-o-photo')
             ->filters([
                 //
             ])

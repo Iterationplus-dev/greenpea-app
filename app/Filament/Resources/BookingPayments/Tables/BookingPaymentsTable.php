@@ -76,7 +76,7 @@ class BookingPaymentsTable
 
                 TextColumn::make('gateway')
                     ->label('Method')
-                    ->badge()
+                    // ->badge()
                     ->color(fn($state) => match ($state) {
                         'paystack' => 'success',
                         'wallet' => 'info',
@@ -85,7 +85,7 @@ class BookingPaymentsTable
                     ->sortable(),
 
                 TextColumn::make('status')
-                    ->badge()
+                    // ->badge()
                     ->color(fn($state) => match ($state) {
                         'success' => 'success',
                         'pending' => 'warning',
@@ -97,7 +97,7 @@ class BookingPaymentsTable
                 TextColumn::make('is_installment')
                     ->label('Installment')
                     ->alignCenter()
-                    ->badge()
+                    // ->badge()
                     ->color(fn(bool $state) => $state ? 'warning' : 'gray')
                     ->formatStateUsing(fn(bool $state) => $state ? 'Yes' : 'No')
                     ->extraAttributes([

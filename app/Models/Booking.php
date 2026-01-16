@@ -49,6 +49,7 @@ class Booking extends Model
         'total_amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
         'net_amount' => 'decimal:2',
+        // 'status' => BookingStatus::class,
     ];
 
 

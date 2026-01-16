@@ -23,7 +23,9 @@ class WalletForm
                         ])
                         ->formatStateUsing(fn($record) => number_format($record->balance, 2))
                         ->columns(1),
-                ])->columnSpanFull(),
+                ])
+                ->compact()
+                ->columnSpanFull(),
         ]);
     }
 }

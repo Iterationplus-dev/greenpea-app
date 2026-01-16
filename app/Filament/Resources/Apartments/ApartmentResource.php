@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Enums\GroupLabel;
 use App\Models\Apartment;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
@@ -24,7 +25,7 @@ class ApartmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
     protected static ?string $navigationLabel = 'Apartments';
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT->value;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT;
     protected static ?string $recordTitleAttribute = 'apartment';
     protected static ?int $navigationSort = 1;
 
@@ -32,6 +33,11 @@ class ApartmentResource extends Resource
     /**
      * Scope apartments based on admin type
      */
+
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::FACILITYMGT->value);
+    }
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
@@ -43,7 +49,9 @@ class ApartmentResource extends Resource
 
         // Owner admins → only their properties
         if (admin()?->type?->value === 'owner') {
-            $query->whereHas('property', fn ($q) =>
+            $query->whereHas(
+                'property',
+                fn($q) =>
                 $q->where('owner_id', admin()->id)
             );
         }

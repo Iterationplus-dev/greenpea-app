@@ -10,11 +10,13 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DissociateAction;
 use App\services\ApartmentImageService;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ToggleColumn;
@@ -30,16 +32,28 @@ class ImagesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                FileUpload::make('image')
-                    ->label('Image')
-                    ->image()
-                    ->disk('public')
-                    ->directory('apartments/tmp')
-                    ->required(),
+                Section::make('Add Details')
+                    ->schema([
 
-                TextInput::make('alt_text')
-                    ->label('Alt Text')
-                    ->maxLength(255),
+                        Grid::make(1)
+                            ->schema([
+
+                                FileUpload::make('image')
+                                    ->label('Image')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('apartments/tmp')
+                                    ->required()
+                                    ->columnSpan(1),
+
+                                TextInput::make('alt_text')
+                                    ->label('Alt Text')
+                                    ->maxLength(255)
+                                    ->columnSpan(1),
+
+                            ]),
+
+                    ])->columnSpanFull(),
             ]);
     }
 
@@ -69,7 +83,9 @@ class ImagesRelationManager extends RelationManager
                     ->label("New Image")
                     ->size('sm')
                     ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
-                    ->icon('heroicon-o-plus'),
+                    ->icon('heroicon-o-plus')
+                    ->createAnother(false)
+                    ->modalSubmitActionLabel('Save Image'),
                 AssociateAction::make()
                     ->size('sm')
                     ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
@@ -81,6 +97,8 @@ class ImagesRelationManager extends RelationManager
                         ->label('New Image')
                         ->icon('heroicon-o-plus')
                         ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
+                        ->createAnother(false)
+                        ->modalSubmitActionLabel('Save Image')
                         ->using(function (array $data, $livewire) {
                             app(ApartmentImageService::class)
                                 ->storeFromPaths(
@@ -101,11 +119,11 @@ class ImagesRelationManager extends RelationManager
                         ->visible(fn($record) => ! $record->is_featured),
                 ])
             ]);
-            // ->toolbarActions([
-            //     BulkActionGroup::make([
-            //         DissociateBulkAction::make(),
-            //         DeleteBulkAction::make(),
-            //     ]),
-            // ]);
+        // ->toolbarActions([
+        //     BulkActionGroup::make([
+        //         DissociateBulkAction::make(),
+        //         DeleteBulkAction::make(),
+        //     ]),
+        // ]);
     }
 }
