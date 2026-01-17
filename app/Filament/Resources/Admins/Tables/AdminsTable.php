@@ -68,12 +68,14 @@ class AdminsTable
             ->filters([
                 //
             ])
+            ->recordActionsColumnLabel('Actions')
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                ->visible(fn() => auth()->user()->isSuper() === true),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -281,9 +281,11 @@
     .custom-rich-editor-175 {
         min-height: 175px;
     }
+
     .custom-rich-editor-150 {
         min-height: 150px;
     }
+
     .custom-rich-editor-100 {
         min-height: 100px;
     }
@@ -399,6 +401,19 @@
     .highlighted-row {
         background-color: #f0fdfa !important;
         box-shadow: 0 0 0 1.5px #10b981 !important;
+    }
+
+    .fi-wi-stats-overview-stat {
+        position: relative;
+    }
+
+    .fi-wi-stats-overview-stat .fi-icon {
+        position: absolute !important;
+        right: 6px !important;
+        top: 6px !important;
+        opacity: 0.38 !important;
+        width: 6cap !important;
+        height: 60px !important;
     }
 
 }

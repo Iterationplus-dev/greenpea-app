@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Admins;
 
+use App\Enums\GroupLabel;
 use App\Filament\Resources\Admins\Pages\CreateAdmin;
 use App\Filament\Resources\Admins\Pages\EditAdmin;
 use App\Filament\Resources\Admins\Pages\ListAdmins;
@@ -20,10 +21,10 @@ class AdminResource extends Resource
     protected static ?string $model = Admin::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static string|UnitEnum|null $navigationGroup = 'System Management';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'Manage Staff';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
 
 
     /**

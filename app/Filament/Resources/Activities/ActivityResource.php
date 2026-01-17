@@ -21,7 +21,7 @@ class ActivityResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
     protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'Activity Logs';
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -30,7 +30,7 @@ class ActivityResource extends Resource
      */
     public static function canAccess(): bool
     {
-        return admin()?->isSuper() || admin()?->isAdmin();
+        return admin()?->isSuper();
     }
 
     public static function form(Schema $schema): Schema

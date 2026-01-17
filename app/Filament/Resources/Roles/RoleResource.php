@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Roles;
 
+use App\Enums\GroupLabel;
 use BackedEnum;
 use UnitEnum;
 use Filament\Resources\Resource;
@@ -19,11 +20,11 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'System Management';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'Manage Roles';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 3;
 
     /**
      * Only Super Admins can manage roles

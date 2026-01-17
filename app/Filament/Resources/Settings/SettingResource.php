@@ -59,6 +59,11 @@ class SettingResource extends Resource
         return false;
     }
 
+    public static function canAccess(): bool
+    {
+        return admin()?->isSuper();
+    }
+
     public static function getPages(): array
     {
         return [

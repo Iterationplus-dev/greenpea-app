@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Permissions;
 
-use BackedEnum;
 use UnitEnum;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
+use BackedEnum;
+use App\Enums\GroupLabel;
 use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Spatie\Permission\Models\Permission;
 use App\Filament\Resources\Permissions\Pages\EditPermission;
@@ -20,10 +21,10 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
-    protected static string|UnitEnum|null $navigationGroup = 'System Management';
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'Manage Permissions';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 4;
 
     /**
      * Only Super Admins can manage permissions

@@ -44,7 +44,7 @@ class FinanceStats extends StatsOverviewWidget
                 ->description('All successful payments')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success')
-                ->icon('heroicon-o-users')
+                // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.booking-payments.index'))
                 ->chart($revenueTrend),
 
@@ -52,7 +52,7 @@ class FinanceStats extends StatsOverviewWidget
                 ->description('Platform earnings')
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('info')
-                ->icon('heroicon-o-users')
+                // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.invoices.index'))
                 ->chart($revenueTrend),
 
@@ -60,7 +60,7 @@ class FinanceStats extends StatsOverviewWidget
                 ->description('All confirmed bookings')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('primary')
-                ->icon('heroicon-o-users')
+                // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.bookings.index'))
                 ->chart($bookingsTrend),
 
@@ -68,7 +68,7 @@ class FinanceStats extends StatsOverviewWidget
                 ->description('Money owed to property owners')
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('success')
-                ->icon('heroicon-o-users')
+                // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.pages.owner-payouts'))
                 ->chart($revenueTrend),
         ];

@@ -26,6 +26,11 @@ class BookingPaymentResource extends Resource
     protected static ?string $recordTitleAttribute = 'BookingPayment';
      protected static ?int $navigationSort = 4;
 
+     public static function canAccess(): bool
+     {
+        return admin()?->isSuper() === true;
+     }
+
     public static function form(Schema $schema): Schema
     {
         return BookingPaymentForm::configure($schema);
