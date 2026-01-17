@@ -36,13 +36,13 @@ class CreateProperty extends CreateRecord
     protected function getCreatedNotification(): ?Notification
     {
         return Notification::make()
-            ->title('Product Created')
-            ->body('New product add successfully')
+            ->title('New Property Added')
+            ->body('New property added successfully')
             ->success();
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('list');
+        return $this->getResource()::getUrl('index', ['record' => $this->record->id]);
     }
 }

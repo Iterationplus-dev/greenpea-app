@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use App\Filament\Resources\Properties\PropertyResource;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -27,20 +28,29 @@ class ApartmentsRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Apartment Name'),
 
                 TextColumn::make('monthly_price')
-                    ->money('NGN'),
+                    ->label('Monthly Price')
+                    ->money(setting('currency')),
 
-                IconColumn::make('is_available')
-                    ->boolean(),
+                ToggleColumn::make('is_available')
+                    ->label('Status')
+                    ->onIcon('heroicon-o-check-circle')
+                    ->offIcon('heroicon-o-x-circle')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->width('5')
+                    ->alignCenter()
+                    ->sortable()
+                    ->visibleFrom('md')
             ])
             ->headerActions([
                 CreateAction::make(),
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                // DeleteAction::make(),
             ])
             ->headerActions([
                 CreateAction::make(),

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Properties;
 
-use App\Enums\GroupLabel;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Property;
+use App\Enums\GroupLabel;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -16,6 +16,7 @@ use App\Filament\Resources\Properties\Pages\CreateProperty;
 use App\Filament\Resources\Properties\Pages\ListProperties;
 use App\Filament\Resources\Properties\Schemas\PropertyForm;
 use App\Filament\Resources\Properties\Tables\PropertiesTable;
+use App\Filament\Resources\Properties\RelationManagers\ApartmentsRelationManager;
 
 class PropertyResource extends Resource
 {
@@ -23,11 +24,16 @@ class PropertyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHomeModern;
     // protected static ?string $navigationGroup = 'Properties';
-    protected static string | UnitEnum | null $navigationGroup = GroupLabel::FACILITYMGT->value;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::FACILITYMGT;
     protected static ?string $navigationLabel = 'Properties';
     protected static ?int $navigationSort = 0;
 
     protected static ?string $recordTitleAttribute = 'property';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::FACILITYMGT->value);
+    }
 
     /* ============OWNER / ADMIN SCOPING ========= */
 
@@ -35,15 +41,9 @@ class PropertyResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        // For non-super-admin users, restrict to their own properties
-        // if (! auth()->user()->isAdmin()) {
-        //     $query->where('owner_id', auth()->id());
-        // }
-
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! auth()->user()->isSuper()) {
             $query->where('owner_id', auth()->id());
         }
-
         return $query;
     }
 
@@ -62,7 +62,7 @@ class PropertyResource extends Resource
     {
         return [
             //
-        //   ApartmentsRelationManager::class,
+          ApartmentsRelationManager::class,
         ];
     }
 

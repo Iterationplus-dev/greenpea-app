@@ -23,9 +23,12 @@ class PropertiesTable
         return $table
             ->striped()
             ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(fn(Builder $query) => $query
-                // ->orderBy('created_at', 'desc')
-                ->orderBy('created_at', 'asc'))
+            ->deferLoading(fn() => ! request()->has('record'))
+            ->modifyQueryUsing(function (Builder $query) {
+                if ($recordId = request()->query('record')) {
+                    $query->where('id', $recordId);
+                }
+            })
             ->emptyStateIcon('heroicon-o-building-office-2')
             ->emptyStateHeading('No properties found!')
             ->emptyStateDescription('You don\'t have properties yet. Click the button to add a property.')
@@ -33,7 +36,6 @@ class PropertiesTable
                 CreateAction::make(),
             ])
             ->paginatedWhileReordering()
-            ->deferLoading()
             ->searchable()
             ->columns([
                 TextColumn::make('name')
@@ -43,8 +45,8 @@ class PropertiesTable
                     ->sortable(),
 
                 TextColumn::make('city')
-                ->label('City')
-                    ->badge()
+                    ->label('City')
+                    // ->badge()
                     ->sortable(),
 
                 TextColumn::make('apartments_count')
@@ -59,7 +61,7 @@ class PropertiesTable
                     ->label('Bookings')
                     ->visibleFrom('md'),
 
-                ToggleColumn::make('status')
+                ToggleColumn::make('is_active')
                     ->label('Status')
                     ->onIcon('heroicon-o-check-circle')
                     ->offIcon('heroicon-o-x-circle')
@@ -90,6 +92,13 @@ class PropertiesTable
                         'inactive' => 'Inactive',
                     ]),
             ])
+            ->recordClasses(
+                fn($record) =>
+                request('record') == $record->id
+                    ? 'highlighted-row'
+                    : null
+            )
+            ->recordActionsColumnLabel('Actions')
             ->recordActions([
                 ActionGroup::make([
                     // EditAction::make(),
@@ -120,7 +129,7 @@ class PropertiesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

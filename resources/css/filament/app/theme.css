@@ -7,11 +7,22 @@
 
 @layer components {
 
+    .fi-sidebar-group-label {
+        flex: 1;
+        font-size: .73rem;
+        line-height: 1rem;
+        --tw-leading: calc(var(--spacing) * 6);
+        line-height: calc(var(--spacing) * 6);
+        --tw-font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-medium);
+        color: var(--gray-900);
+    }
+
     .fi-sidebar-item-label {
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: .905rem;
-        line-height: 1.3rem;
+        font-size: .88rem;
+        line-height: 1.1rem;
         --tw-font-weight: var(--font-weight-small);
         font-weight: var(--font-weight-small);
         /* color: var(--gray-700); */
@@ -20,12 +31,16 @@
         overflow: hidden;
     }
 
+    .fi-sidebar-item-label:hover {
+        color: #d30606;
+    }
+
     .fi-sidebar-item-btn {
         transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
         transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
         transition-duration: var(--tw-duration, var(--default-transition-duration));
         --tw-duration: 75ms;
-        height: 1.7.1rem;
+        height: 1.3rem;
         transition-duration: 75ms;
     }
 
@@ -39,7 +54,7 @@
     }
 
     .fi-sidebar {
-        background-color: #f2fcf8 !important;
+        background-color: #e5fdf4 !important;
     }
 
     /* Dark mode */
@@ -78,46 +93,24 @@
 
 
     /* Table rows height */
-
-    /* 1. Target the main table cell (<td>) element */
     .fi-ta-cell {
-        padding-top: 0.15rem !important;
-        padding-bottom: 0.15rem !important;
-        font-size: 0.75rem !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        font-size: 0.8rem !important;
+        line-height: 1rem !important;
     }
 
-    .fi-ta-table {
-        font-size: 0.7rem;
-    }
-
-    /* .fi-ta-table {
-        font-size: 0.75rem;
-    } */
-
-    /* .fi-ta-table td,
-    .fi-ta-table th {
-        padding-top: 0.35rem;
-        padding-bottom: 0.35rem;
-    } */
-
-    .fi-ta-table th {
-        padding-top: 0.05rem;
-        padding-bottom: 0.05rem;
+    .fi-ta-header-cell {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        font-size: 0.85rem !important;
+        line-height: .85rem !important;
         background-color: #cafdde;
-        color: #017a30;
+        color: #0e0e0e;
     }
 
     .fi-icon-btn {
         padding: 1px;
-    }
-
-    /* 2. Target the table header cell (<th>) for consistency */
-    .fi-ta-header-cell {
-        padding-top: 0.75rem !important;
-        padding-bottom: 0.75rem !important;
-        font-size: 0.95rem !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-        font-weight: 600 !important;
     }
 
     /* 3. Reduce padding on the checkbox/bulk-action column */
@@ -188,9 +181,9 @@
 
     /* heading */
     .fi-header-heading {
-        font-size: 1.3rem !important;
-        line-height: 1.3rem !important;
-        font-family: 'Roboto', sans-serif !important;
+        font-size: 1.5rem !important;
+        line-height: 1.5rem !important;
+        font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
         font-weight: 600 !important;
     }
 
@@ -204,17 +197,17 @@
 
     @media (min-width: 768px) {
         .fi-header-heading {
-            font-size: 0.875rem;
+            font-size: 1rem;
             /* text-3xl */
-            line-height: 0.875rem;
+            line-height: 1rem;
         }
     }
 
     @media (min-width: 1024px) {
         .fi-header-heading {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             /* text-4xl */
-            line-height: 1.5rem;
+            line-height: 1.3rem;
         }
     }
 
@@ -276,11 +269,6 @@
     }
 
 
-    .custom-table-font {
-        /* Apply your desired font family */
-        font-family: 'Times New Roman', Times, serif !important;
-    }
-
     .monospace-font-column {
         /* Apply the desired font family */
         font-family: Consolas, 'Courier New', monospace !important;
@@ -290,9 +278,14 @@
     /* RichEditor */
 
     /* Target the RichEditor's wrapper */
-    .custom-rich-editor {
-        /* Set a minimum height on the entire component */
-        min-height: 140px;
+    .custom-rich-editor-175 {
+        min-height: 175px;
+    }
+    .custom-rich-editor-150 {
+        min-height: 150px;
+    }
+    .custom-rich-editor-100 {
+        min-height: 100px;
     }
 
     /* Target the actual TipTap content area inside the editor */
@@ -372,8 +365,8 @@
 
     h1.fi-simple-header-heading {
         text-align: center;
-        font-size: 1.25rem;
-        line-height: 3.5rem;
+        font-size: 1.2rem;
+        line-height: 1.2rem;
         font-family: 'Roboto';
         font-weight: 600;
     }
