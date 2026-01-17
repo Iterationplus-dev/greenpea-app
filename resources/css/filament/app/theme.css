@@ -220,8 +220,8 @@
 
     /* input border */
     /* Target the input element within Filament's text input component */
-    .fi-fo-text-input input {
-        border-width: 1.8px !important;
+    .fi-fo-text-input, .fi-fo-date-time-picker, .fi-fo-textarea, input {
+        border-width: 1px !important;
         border-style: dotted !important;
         border-color: #1dffa1 !important;
         /*Lightgray*/

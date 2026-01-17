@@ -51,6 +51,7 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 // Dashboard::class,
                 \App\Filament\Pages\Dashboard::class,
+                 \App\Filament\Pages\WalkInBookingWizard::class,
             ])
             ->sidebarWidth('16rem')
             ->sidebarCollapsibleOnDesktop(false)

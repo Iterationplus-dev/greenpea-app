@@ -27,7 +27,7 @@ class PaystackService
         ?Invoice $invoice = null
     ): BookingPayment {
 
-        $reference = $invoice?->reference ?? 'BK_' . Str::uuid();
+        $reference = $invoice?->reference ?? paymentReference();
 
         // $email =
         //     $booking->guest_email

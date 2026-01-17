@@ -44,7 +44,7 @@ class BookingService
                 'total_amount' => $data['amount'],
                 'net_amount'   => $data['amount'],
                 'status'       => BookingStatus::PENDING->value ?? 'pending',
-                'reference'    => $data['reference'] ?? $this->generateReference(),
+                'reference'    => $data['reference'] ?? bookingReference(),
             ]);
         });
     }
@@ -79,13 +79,5 @@ class BookingService
                 'This apartment is already booked for the selected dates!'
             );
         }
-    }
-
-    /**
-     * Generate a unique booking reference.
-     */
-    protected function generateReference(): string
-    {
-        return 'BKG-' . now()->format('Ymd') . '-' . Str::upper(Str::random(6));
     }
 }

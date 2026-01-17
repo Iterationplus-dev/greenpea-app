@@ -25,8 +25,8 @@ class BookingsTable
         $admin = auth('admin')->user();
         return $table
             ->striped()
-            ->defaultSort('created_at', 'asc')
-            // ->modifyQueryUsing(fn(Builder $query) => $query)
+            ->defaultSort('created_at', 'desc')
+            ->deferLoading(fn() => ! request()->has('record'))
             ->modifyQueryUsing(function (Builder $query) {
                 $admin = auth('admin')->user();
 
@@ -35,12 +35,16 @@ class BookingsTable
                         $q->where('owner_id', $admin->id);
                     });
                 }
+                //
+                if ($recordId = request()->query('record')) {
+                    $query->where('id', $recordId);
+                }
             })
             ->emptyStateIcon('heroicon-o-calendar-days')
             ->emptyStateHeading('No bookings found!')
             ->emptyStateDescription('You don\'t have bookings yet. Click the button to add a booking.')
             ->emptyStateActions([
-                CreateAction::make(),
+                // CreateAction::make(),
             ])
             ->paginatedWhileReordering()
 
@@ -85,14 +89,25 @@ class BookingsTable
                             default => null,
                         };
                     }),
-                TextColumn::make('created_at')
+                TextColumn::make('start_date')
                     ->date()
-                    ->label('Date'),
+                    ->label('Check-In')
+                    ->color('info'),
+                TextColumn::make('end_date')
+                    ->date()
+                    ->label('Check-Out')
+                    ->color('danger'),
             ])
-            ->deferLoading()
+            // ->deferLoading()
             ->filters([
                 //
             ])
+            ->recordClasses(
+                fn($record) =>
+                request('record') == $record->id
+                    ? 'highlighted-row'
+                    : null
+            )
             ->recordActions([
 
                 /* APPROVE */

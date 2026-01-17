@@ -66,3 +66,17 @@ if (! function_exists('walletReference')) {
         return 'WL_' . Str::uuid();
     }
 }
+
+if (! function_exists('bookingReference')) {
+    function bookingReference(): string
+    {
+        return 'BKG-' . now()->format('Ymd') . '-' . Str::upper(Str::random(6));
+    }
+}
+
+if (! function_exists('paymentReference')) {
+    function paymentReference(): string
+    {
+        return 'BK_' . Str::uuid();
+    }
+}

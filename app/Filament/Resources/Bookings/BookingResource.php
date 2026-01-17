@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Bookings;
 
-use App\Enums\GroupLabel;
 use UnitEnum;
 use BackedEnum;
 use App\Models\Booking;
+use App\Enums\GroupLabel;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\Bookings\Pages\ViewBooking;
 use App\Filament\Resources\Bookings\Pages\ListBookings;
+use App\Filament\Resources\Bookings\Pages\CreateBooking;
 use App\Filament\Resources\Bookings\Schemas\BookingForm;
 use App\Filament\Resources\Bookings\Tables\BookingsTable;
 
@@ -23,7 +24,7 @@ class BookingResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
     protected static string | UnitEnum | null $navigationGroup = GroupLabel::BOOKINGS;
     protected static ?string $navigationLabel = 'Manage Bookings';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'reference';
 
@@ -68,9 +69,10 @@ class BookingResource extends Resource
     {
         return [
             'index' => ListBookings::route('/'),
+            // 'create' => CreateBooking::route('/create'),
             'view' => ViewBooking::route('/{record}'),
         ];
     }
 
-    
+
 }

@@ -69,6 +69,10 @@ class Booking extends Model
         return $this->hasOne(Invoice::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function guest()
     {
         return $this->belongsTo(User::class, 'user_id');
