@@ -23,7 +23,7 @@ class RecentBookingsTable extends TableWidget
             ->query(
                 fn(): Builder => Booking::query()
                     ->latest()
-                    ->limit(8)
+                    ->limit(6)
             )
             ->striped()
             ->poll('60s')
@@ -65,7 +65,8 @@ class RecentBookingsTable extends TableWidget
                     // ->money('NGN')
                     ->size('sm')
                     ->alignEnd()
-                    ->formatStateUsing(fn($state) => number_format($state, 2)),
+                    ->formatStateUsing(fn($state) => number_format($state, 2))
+                    ->extraAttributes(['class' => 'money']),
 
                 TextColumn::make('created_at')
                     ->label('Date')
@@ -80,6 +81,7 @@ class RecentBookingsTable extends TableWidget
             ->headerActions([
                 //
             ])
+            ->recordActionsColumnLabel('Action')
             ->recordActions([
                 Action::make('view')
                     ->icon('heroicon-o-eye')

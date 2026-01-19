@@ -14,7 +14,7 @@ class InvoicesTable
     public static function configure(Table $table): Table
     {
         return $table
-        ->striped()
+            ->striped()
             ->columns([
                 TextColumn::make('number')
                     ->label('Invoice #')
@@ -37,7 +37,8 @@ class InvoicesTable
                     ->money('NGN')
                     ->sortable()
                     ->alignRight()
-                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+                    ->extraCellAttributes(['class' => 'pr-4'])
+                    ->extraHeaderAttributes(['class' => 'pr-4']),
 
                 TextColumn::make('platform_fee')
                     ->label('Platform Fee')
@@ -45,20 +46,23 @@ class InvoicesTable
                     ->color('info')
                     ->sortable()
                     ->alignRight()
-                    ->extraAttributes(['class' => 'custom-padding-right-column'])
-                    ->formatStateUsing(fn($state) => number_format($state,2)),
+                    ->formatStateUsing(fn($state) => number_format($state, 2))
+                    ->extraCellAttributes(['class' => 'pr-4'])
+                    ->extraHeaderAttributes(['class' => 'pr-4']),
 
                 TextColumn::make('owner_amount')
-                    ->label('Owner Earns')
+                    ->label('Earnings')
                     // ->money('NGN')
                     ->color('success')
                     ->alignRight()
-                    ->getStateUsing(fn ($record) => abs($record->amount - $record->platform_fee))
-                    ->extraAttributes(['class' => 'custom-padding-right-column'])
-                    ->formatStateUsing(fn($state) => number_format($state,2)),
+                    ->getStateUsing(fn($record) => abs($record->amount - $record->platform_fee))
+                    ->formatStateUsing(fn($state) => number_format($state, 2))
+                    ->extraCellAttributes(['class' => 'pr-4'])
+                    ->extraHeaderAttributes(['class' => 'pr-4']),
 
                 TextColumn::make('status')
-                    // ->badge()
+                    ->badge()
+                    ->alignCenter()
                     ->colors([
                         'gray' => 'unpaid',
                         'success' => 'paid',
@@ -68,7 +72,7 @@ class InvoicesTable
 
                 TextColumn::make('created_at')
                     ->label('Date')
-                    ->dateTime()
+                    ->date('M d, y')
                     ->sortable(),
             ])
 
@@ -88,11 +92,10 @@ class InvoicesTable
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ])
 
             ->defaultSort('created_at', 'desc');
     }
 }
-

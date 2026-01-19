@@ -2,14 +2,11 @@
 
 namespace App\Providers;
 
-use App\Events\BookingPaid;
-use App\Listeners\SendWhatsAppNotification;
 use App\Models\Booking;
 use App\Models\BookingPayment;
-use App\Models\Refund;
-use App\Models\Wallet;
-use App\Observers\AuditObserver;
+use Filament\Facades\Filament;
 use App\Observers\BookingObserver;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\BookingPaymentObserver;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -31,10 +28,18 @@ class AppServiceProvider extends ServiceProvider
     {
         BookingPayment::observe(BookingPaymentObserver::class);
         Booking::observe(BookingObserver::class);
-        // Booking::observe(AuditObserver::class);
-        // BookingPayment::observe(AuditObserver::class);
-        // Refund::observe(AuditObserver::class);
-        // Wallet::observe(AuditObserver::class);
+
+        // ───────── COMPACT MODE SUPPORT ─────────
+        Filament::serving(function () {
+            $admin = Auth::guard('admin')->user();
+
+            if ($admin?->compact_tables) {
+                Filament::registerRenderHook(
+                    'body.start',
+                    fn() => '<script>document.body.classList.add("compact-mode")</script>'
+                );
+            }
+        });
 
         //
         // Event::listen(
@@ -43,5 +48,4 @@ class AppServiceProvider extends ServiceProvider
         // );
 
     }
-
 }

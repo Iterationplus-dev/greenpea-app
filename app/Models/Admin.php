@@ -32,6 +32,9 @@ class Admin extends Authenticatable
         'role' => AdminRole::class,
         'type' => AdminType::class,
         'status' => AdminStatus::class,
+        'compact_tables' => 'boolean',
     ];
+
+
     //
 }

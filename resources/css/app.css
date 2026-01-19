@@ -1,12 +1,44 @@
-@import 'tailwindcss';
 
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Macondo&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Buda:wght@300&display=swap');
+
+@import 'tailwindcss';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 @import '../../vendor/alperenersoy/filament-export/resources/css/filament-export.css';
 
+
+/* @theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system;
+} */
+
+/* @theme {
+    --font-sans: 'Poppins', ui-sans-serif, system-ui;
+} */
+
+/* @theme {
+    --font-sans: 'Roboto', ui-sans-serif, system-ui, -apple-system;
+} *
+
+/* @theme {
+    --font-sans: 'Macondo', ui-sans-serif, system-ui;
+} */
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Buda', ui-sans-serif, system-ui;
 }
+
+/* @theme {
+    --font-sans: 'Lato', ui-sans-serif, system-ui, -apple-system;
+} */
+
+/* @theme {
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system;
+} */

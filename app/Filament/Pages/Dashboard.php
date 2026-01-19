@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Components\CompactModeAction;
 use Filament\Facades\Filament;
 use App\Filament\Widgets\Finance\FinanceStats;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -12,6 +13,12 @@ use Illuminate\Support\HtmlString;
 
 class Dashboard extends BaseDashboard
 {
+    protected function getHeaderActions(): array
+    {
+        return [
+            CompactModeAction::make(),
+        ];
+    }
     public function getHeaderWidgets(): array
     {
         return [
