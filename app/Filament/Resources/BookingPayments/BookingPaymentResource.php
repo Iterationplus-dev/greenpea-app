@@ -21,15 +21,15 @@ class BookingPaymentResource extends Resource
     protected static ?string $model = BookingPayment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
-    protected static string | UnitEnum | null $navigationGroup = GroupLabel::BOOKINGS;
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::FINANCE;
 
     protected static ?string $recordTitleAttribute = 'BookingPayment';
-     protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 2;
 
-     public static function canAccess(): bool
-     {
+    public static function canAccess(): bool
+    {
         return admin()?->isSuper() === true;
-     }
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -2,10 +2,12 @@
 
 namespace App\Listeners;
 
+use App\Mail\InvoiceMail;
 use App\Events\BookingApproved;
 use App\Services\InvoiceService;
 use App\Services\PaystackService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -32,22 +34,25 @@ class ProcessBookingApproval
                 return;
             }
 
-            // 1. Lock the apartment
+            // Lock the apartment
             $booking->apartment->update([
                 'is_available' => false,
             ]);
 
             // 2. Generate invoice
             $invoice = app(InvoiceService::class)
-                ->createForBooking($booking);
+                ->generateForBooking($booking);
 
-            // 3. Create Paystack payment
+            // Send invoice email immediately
+            Mail::to($booking->guest_email)
+                ->send(new InvoiceMail($invoice));
+
+            //Create Paystack payment
             $payment = app(PaystackService::class)
                 ->createBookingPayment($booking, $invoice);
 
-            // 4. Store payment link
+            //Store payment link
             $booking->update([
-                // 'payment_link' => $payment->authorization_url,
                 'payment_link' => $payment->response['authorization_url'],
             ]);
         });

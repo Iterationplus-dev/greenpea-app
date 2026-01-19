@@ -2,12 +2,14 @@
 
 namespace App\Mail;
 
+use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PaymentReceiptMail extends Mailable
 {
@@ -16,7 +18,11 @@ class PaymentReceiptMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    // public function __construct(
+    //     public Invoice $invoice
+    // ) {}
+
+    public function __construct(public $invoice)
     {
         //
     }
@@ -27,7 +33,7 @@ class PaymentReceiptMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Payment Receipt – Greenpea',
+            subject: 'Payment Receipt – ' . $this->invoice->number,
         );
     }
 
@@ -37,7 +43,12 @@ class PaymentReceiptMail extends Mailable
     public function content(): Content
     {
         return new Content(
+            // view: 'emails.payment.receipt',
             markdown: 'emails.payment.receipt',
+            with: [
+                'invoice' => $this->invoice,
+                'booking' => $this->invoice->booking,
+            ],
         );
     }
 
@@ -48,6 +59,10 @@ class PaymentReceiptMail extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            Attachment::fromPath($this->invoice->pdf_path)
+                ->as('Receipt-' . $this->invoice->number . '.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

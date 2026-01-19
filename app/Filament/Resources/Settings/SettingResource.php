@@ -23,7 +23,7 @@ class SettingResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
     protected static string | UnitEnum | null $navigationGroup = GroupLabel::SETTINGS;
     protected static ?string $navigationLabel = 'General Settings';
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'Setting';
 

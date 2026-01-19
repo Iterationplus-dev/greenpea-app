@@ -23,7 +23,7 @@ class RecentBookingsTable extends TableWidget
             ->query(
                 fn(): Builder => Booking::query()
                     ->latest()
-                    ->limit(6)
+                    ->limit(5)
             )
             ->striped()
             ->poll('60s')

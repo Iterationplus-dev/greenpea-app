@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Bookings\Tables;
 
+use Carbon\Carbon;
 use App\Enums\UserRole;
 use App\Models\Booking;
 use Filament\Tables\Table;
@@ -52,7 +53,7 @@ class BookingsTable
                 TextColumn::make('reference')
                     ->searchable()
                     ->label('Reference')
-                    ->weight(FontWeight::Bold)
+                    ->weight(FontWeight::Medium)
                     ->extraAttributes(['class' => 'custom-padding-left-column']),
                 TextColumn::make('guest_name')
                     ->searchable()
@@ -92,11 +93,22 @@ class BookingsTable
                 TextColumn::make('start_date')
                     ->date()
                     ->label('Check-In')
-                    ->color('info'),
+                    ->color('info')
+                    ->alignCenter(),
                 TextColumn::make('end_date')
                     ->date()
                     ->label('Check-Out')
-                    ->color('danger'),
+                    ->color('danger')
+                    ->alignCenter(),
+
+                TextColumn::make('stay_duration')
+                    ->label('Remaining')
+                    ->alignCenter()
+                    ->getStateUsing(function ($record) {
+                        return Carbon::parse($record->start_date)
+                            ->diffInDays(Carbon::parse($record->end_date));
+                    })
+                    ->suffix(' days'),
             ])
             // ->deferLoading()
             ->filters([
@@ -108,6 +120,7 @@ class BookingsTable
                     ? 'highlighted-row'
                     : null
             )
+            ->recordActionsColumnLabel('Action')
             ->recordActions([
 
                 /* APPROVE */

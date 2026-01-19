@@ -20,12 +20,17 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::ACCOUNT->value;
     protected static ?string $navigationLabel = 'Manage Roles';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 3;
 
+
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::ACCOUNT->value);
+    }
     /**
      * Only Super Admins can manage roles
      */

@@ -25,6 +25,7 @@ class WalletResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
     protected static string | UnitEnum | null $navigationGroup = GroupLabel::FINANCE;
     protected static ?string $recordTitleAttribute = 'Wallet';
+    protected static ?int $navigationSort = 0;
 
 
     public static function getEloquentQuery(): Builder

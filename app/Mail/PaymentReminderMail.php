@@ -4,26 +4,23 @@ namespace App\Mail;
 
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class InvoiceMail extends Mailable implements ShouldQueue
+class PaymentReminderMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
-    public Invoice $invoice;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Invoice $invoice)
-    {
-        $this->invoice = $invoice;
-    }
+    public function __construct(
+        public Invoice $invoice
+    ) {}
 
     /**
      * Get the message envelope.
@@ -31,7 +28,7 @@ class InvoiceMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Booking Invoice – ' . $this->invoice->number,
+            subject: 'Payment Reminder – Invoice ' . $this->invoice->number,
         );
     }
 
@@ -41,7 +38,7 @@ class InvoiceMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.invoice',
+            view: 'emails.payment.reminder',
             with: [
                 'invoice' => $this->invoice,
                 'booking' => $this->invoice->booking,
@@ -56,13 +53,13 @@ class InvoiceMail extends Mailable implements ShouldQueue
      */
     public function attachments(): array
     {
-        if (! $this->invoice->pdf_url) {
+        if (! $this->invoice->pdf_path) {
             return [];
         }
 
         return [
-            Attachment::fromPath($this->invoice->pdf_url)
-                ->as($this->invoice->number . '.pdf')
+            Attachment::fromPath($this->invoice->pdf_path)
+                ->as('Invoice-' . $this->invoice->number . '.pdf')
                 ->withMime('application/pdf'),
         ];
     }

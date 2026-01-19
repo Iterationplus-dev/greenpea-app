@@ -14,8 +14,13 @@ class Invoice extends Model
         'amount',
         'platform_fee',
         'net_amount',
+
+        'amount_paid',
+        'balance_due',
+
         'pdf_path',
         'issued_at',
+        'paid_at',
         'status',
         'pdf_public_id'
     ];
@@ -24,6 +29,8 @@ class Invoice extends Model
         'amount' => 'decimal:2',
         'platform_fee' => 'decimal:2',
         'net_amount' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
+        'balance_due' => 'decimal:2',
         'issued_at' => 'datetime',
         'paid_at'   => 'datetime',
     ];

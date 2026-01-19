@@ -154,4 +154,17 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(OwnerEarning::class, 'owner_id');
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasManyThrough(
+            WalletTransaction::class,
+            Wallet::class
+        );
+    }
 }

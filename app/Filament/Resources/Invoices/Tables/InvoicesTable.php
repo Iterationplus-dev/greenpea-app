@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\Invoices\Tables;
 
 use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\Action;
+use App\Services\InvoiceService;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
 
 class InvoicesTable
@@ -20,13 +23,12 @@ class InvoicesTable
                     ->label('Invoice #')
                     ->searchable()
                     ->sortable()
-                    ->copyable()
-                    ->limit(8),
+                    ->copyable(),
 
-                TextColumn::make('booking.reference')
-                    ->label('Booking')
-                    ->limit(10)
-                    ->sortable(),
+                // TextColumn::make('booking.reference')
+                //     ->label('Booking')
+                //     ->limit(10)
+                //     ->sortable(),
 
                 TextColumn::make('booking.guest_name')
                     ->label('Guest')
@@ -34,17 +36,15 @@ class InvoicesTable
 
                 TextColumn::make('amount')
                     ->label('Total')
-                    ->money('NGN')
-                    ->sortable()
+                    ->money(setting('currency'))
                     ->alignRight()
                     ->extraCellAttributes(['class' => 'pr-4'])
                     ->extraHeaderAttributes(['class' => 'pr-4']),
 
                 TextColumn::make('platform_fee')
                     ->label('Platform Fee')
-                    // ->money('NGN')
+                    ->money(setting('currency'))
                     ->color('info')
-                    ->sortable()
                     ->alignRight()
                     ->formatStateUsing(fn($state) => number_format($state, 2))
                     ->extraCellAttributes(['class' => 'pr-4'])
@@ -52,13 +52,24 @@ class InvoicesTable
 
                 TextColumn::make('owner_amount')
                     ->label('Earnings')
-                    // ->money('NGN')
+                    ->money(setting('currency'))
                     ->color('success')
                     ->alignRight()
                     ->getStateUsing(fn($record) => abs($record->amount - $record->platform_fee))
                     ->formatStateUsing(fn($state) => number_format($state, 2))
                     ->extraCellAttributes(['class' => 'pr-4'])
                     ->extraHeaderAttributes(['class' => 'pr-4']),
+
+                TextColumn::make('amount_paid')
+                    ->label('Paid')
+                    ->money(setting('currency'))
+                    ->alignRight(),
+
+                TextColumn::make('balance_due')
+                    ->label('Balance')
+                    ->money(setting('currency'))
+                    ->color(fn($state) => $state > 0 ? 'danger' : 'success')
+                    ->alignRight(),
 
                 TextColumn::make('status')
                     ->badge()
@@ -87,7 +98,31 @@ class InvoicesTable
             ])
             ->recordActionsColumnLabel('Action')
             ->recordActions([
-                EditAction::make(),
+                Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->openUrlInNewTab()
+                    ->url(fn($record) => $record->pdf_path)
+                    ->visible(fn($record) => ! empty($record->pdf_path)),
+
+                Action::make('regenerate')
+                    ->label('Regenerate')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+
+                        app(InvoiceService::class)
+                            ->generateForBooking($record->booking);
+
+                        Notification::make()
+                            ->title('Invoice Regenerated')
+                            ->body('The invoice has been successfully regenerated.')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn() => admin()?->canManageFinance()),
             ])
 
             ->toolbarActions([

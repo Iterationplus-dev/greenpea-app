@@ -21,11 +21,16 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::ACCOUNT->value;
     protected static ?string $navigationLabel = 'Manage Users';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'name';
 
+
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::ACCOUNT->value);
+    }
     /**
      * Only Admins / Super Admins can manage platform users
      */

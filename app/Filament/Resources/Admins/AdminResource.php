@@ -21,12 +21,16 @@ class AdminResource extends Resource
     protected static ?string $model = Admin::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::ACCOUNT->value;
     protected static ?string $navigationLabel = 'Manage Staff';
     protected static ?string $recordTitleAttribute = 'name';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
 
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::ACCOUNT->value);
+    }
     /**
      * Only Super Admins can manage admins
      */

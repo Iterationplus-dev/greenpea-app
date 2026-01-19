@@ -4,8 +4,9 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Booking;
-use App\Models\BookingPayment;
+use App\Enums\PaymentStatus;
 use App\Enums\WalletTransType;
+use App\Models\BookingPayment;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 
@@ -19,8 +20,6 @@ class WalletService
     {
         $wallet = $user->wallet()->firstOrCreate([]);
 
-        // $wallet->increment('balance', $amount);
-
         $wallet->transactions()->create([
             'amount' => $amount,
             'type' => WalletTransType::CREDIT->value,
@@ -30,17 +29,20 @@ class WalletService
 
     public static function debit(User $user, float $amount, string $desc = '')
     {
-        $wallet = $user->wallet;
+        return DB::transaction(function () use ($user, $amount, $desc) {
 
-        throw_if($wallet->balance < $amount, 'Insufficient balance');
+            $wallet = $user->wallet()->lockForUpdate()->firstOrCreate([]);
 
-        // $wallet->decrement('balance', $amount);
+            if ($wallet->balance < $amount) {
+                throw new \RuntimeException('Insufficient balance');
+            }
 
-        $wallet->transactions()->create([
-            'amount' => $amount,
-            'type' => WalletTransType::DEBIT->value,
-            'description' => $desc,
-        ]);
+            return $wallet->transactions()->create([
+                'amount' => $amount,
+                'type' => WalletTransType::DEBIT->value,
+                'description' => $desc,
+            ]);
+        });
     }
 
     /* ---------------------------------
@@ -70,15 +72,15 @@ class WalletService
                 'booking_id' => $booking->id,
                 'amount' => $amount,
                 'gateway' => 'wallet',
-                'status' => 'success',
+                'status' => PaymentStatus::SUCCESS->value,
                 'is_installment' => true,
                 'response' => null,
             ]);
 
             //Auto-approve if fully paid
-            if ($booking->isFullyPaid()) {
-                $booking->update(['status' => 'approved']);
-            }
+            // if ($booking->isFullyPaid()) {
+            //     $booking->update(['status' => 'approved']);
+            // }
 
             return $payment;
         });
@@ -90,31 +92,47 @@ class WalletService
 
     public function creditOwnerForBooking(Booking $booking): void
     {
-        $owner = $booking->apartment->property->owner;
-        $wallet = $owner->wallet;
+        $owner = $booking->apartment?->property?->owner;
 
-        $platformFeePercent = config('platform.fee_percent', 10);
-        $gross = $booking->amount;
+        if (! $owner) {
+            logger()->error('Cannot credit owner: owner not found', [
+                'booking_id' => $booking->id,
+            ]);
+            return;
+        }
 
-        $platformFee = round($gross * ($platformFeePercent / 100), 2);
+        // Ensure wallet exists
+        $wallet = $owner->wallet()->firstOrCreate([]);
+
+        $gross = $booking->net_amount ?? $booking->amount;
+
+        $platformFee = platformFee($gross);
         $net = $gross - $platformFee;
 
-        // Credit owner
-        $wallet->increment('balance', $net);
+        $alreadyCredited = WalletTransaction::where('description', "Booking payout: {$booking->reference}")
+            ->exists();
+        if ($alreadyCredited) {
+            return;
+        }
 
-        WalletTransaction::create([
-            'wallet_id' => $wallet->id,
-            'type' => WalletTransType::CREDIT->value,
+        // Credit owner via transaction (NOT increment)
+        $wallet->transactions()->create([
             'amount' => $net,
-            'description' => 'Booking payout',
+            'type' => WalletTransType::CREDIT->value,
+            'description' => "Booking payout: {$booking->reference}",
         ]);
 
-        // Platform revenue
-        WalletTransaction::create([
-            'wallet_id' => null,
-            'type' => 'platform_fee',
-            'amount' => $platformFee,
-            'description' => 'Platform fee from booking',
-        ]);
+        // Credit platform wallet
+        $platformUser = User::where('email', 'platform@system.local')->first();
+
+        if ($platformUser) {
+            $platformWallet = $platformUser->wallet()->firstOrCreate([]);
+
+            $platformWallet->transactions()->create([
+                'amount' => $platformFee,
+                'type' => WalletTransType::CREDIT->value,
+                'description' => "Platform fee from booking {$booking->reference}",
+            ]);
+        }
     }
 }

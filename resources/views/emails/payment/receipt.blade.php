@@ -1,17 +1,109 @@
-@component('mail::message')
-# Payment Received 🎉
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Payment Receipt – {{ $invoice->number }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f6f9;font-family:Arial, sans-serif;">
 
-Your payment for **{{ $invoice->booking->apartment->name }}** has been confirmed.
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:20px;">
+<tr>
+<td align="center">
 
-### Invoice Reference
-{{ $invoice->reference }}
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:10px;overflow:hidden;">
 
-### Amount
-₦{{ number_format($invoice->amount, 2) }}
+        <!-- HEADER -->
+        <tr>
+            <td style="background:#198754;padding:25px;color:#fff;text-align:center;">
+                <h2 style="margin:0;">GreenPea Apartments</h2>
+                <p style="margin:5px 0 0;">Payment Receipt</p>
+            </td>
+        </tr>
 
-@component('mail::button', ['url' => $invoice->pdf_url])
-Download Receipt
-@endcomponent
+        <!-- BODY -->
+        <tr>
+            <td style="padding:25px;color:#333;">
 
-Thank you for staying with Greenpea 🇳🇬
-@endcomponent
+                <p>Hello <strong>{{ $booking->guest_name }}</strong>,</p>
+
+                <p>
+                    We’re pleased to inform you that your booking has been
+                    <strong>fully paid</strong>.
+                </p>
+
+                <table width="100%" cellpadding="8" cellspacing="0" style="margin:20px 0;border:1px solid #eaeaea;">
+                    <tr>
+                        <td><strong>Invoice Number:</strong></td>
+                        <td>{{ $invoice->number }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Apartment:</strong></td>
+                        <td>{{ $booking->apartment->name ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stay Period:</strong></td>
+                        <td>
+                            {{ $booking->start_date->format('M d, Y') }}
+                            →
+                            {{ $booking->end_date->format('M d, Y') }}
+                        </td>
+                    </tr>
+                </table>
+
+                <h4>Payment Summary</h4>
+
+                <table width="100%" cellpadding="8" cellspacing="0" style="border:1px solid #eaeaea;">
+                    <tr>
+                        <td>Total Amount:</td>
+                        <td align="right">₦{{ number_format($invoice->amount, 2) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Paid:</td>
+                        <td align="right">
+                            <strong>₦{{ number_format($invoice->amount_paid, 2) }}</strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Status:</td>
+                        <td align="right">
+                            <strong style="color:green;">PAID</strong>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="margin-top:20px;">
+                    Your official receipt and invoice PDF are attached to this email.
+                </p>
+
+                <p>
+                    We look forward to hosting you at
+                    <strong>{{ $booking->apartment->name ?? 'our apartment' }}</strong>.
+                </p>
+
+                <p>
+                    If you need anything before your arrival, feel free to reach out.
+                </p>
+
+                <p>Best regards,<br>
+                <strong>GreenPea Apartments Team</strong></p>
+
+            </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+            <td style="background:#f1f1f1;padding:15px;text-align:center;font-size:12px;color:#777;">
+                © {{ date('Y') }} GreenPea Apartments. All rights reserved.
+            </td>
+        </tr>
+
+    </table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

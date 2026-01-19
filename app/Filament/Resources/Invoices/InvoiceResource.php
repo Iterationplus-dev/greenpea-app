@@ -22,9 +22,9 @@ class InvoiceResource extends Resource
     //
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentMinus;
-    protected static string | UnitEnum | null $navigationGroup = GroupLabel::BOOKINGS;
+    protected static string | UnitEnum | null $navigationGroup = GroupLabel::FINANCE;
     protected static ?string $navigationLabel = 'Invoices';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'Invoice';
 
     public static function form(Schema $schema): Schema

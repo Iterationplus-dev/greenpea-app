@@ -37,6 +37,8 @@ class WalkInBookingWizard extends Page implements HasForms
 
     public array $data = [];
 
+    public bool $processing = false;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -82,95 +84,107 @@ class WalkInBookingWizard extends Page implements HasForms
 
     public function submit(): void
     {
-        $data = $this->data ?? [];
-
-        if (empty($data['apartment'])) {
-            Notification::make()
-                ->title('Apartment is required')
-                ->danger()
-                ->send();
+        if ($this->processing) {
             return;
         }
+        $this->processing = true;
 
-        $conflict = BookingForm::getConflictingBooking($data);
+        try {
 
-        if ($conflict) {
+            $data = $this->data ?? [];
 
-            $message =
-                "CONFLICT DETECTED\n" .
-                "Reference: {$conflict->reference}\n" .
-                "Dates: {$conflict->start_date} → {$conflict->end_date}";
+            if (empty($data['apartment'])) {
+                Notification::make()
+                    ->title('Apartment is required')
+                    ->body('Please select an apartment to proceed.')
+                    ->danger()
+                    ->send();
+                return;
+            }
 
-            $this->data['conflict_details'] = $message;
+            $conflict = BookingForm::getConflictingBooking($data);
 
-            $this->data['occupied_calendar'] =
-                implode("\n", BookingForm::getOccupiedRanges($data));
+            if ($conflict) {
 
-            Notification::make()
-                ->title('Booking Conflict')
-                ->body('This apartment is already booked for the selected dates.')
-                ->danger()
-                ->send();
+                $message =
+                    "CONFLICT DETECTED\n" .
+                    "Reference: {$conflict->reference}\n" .
+                    "Dates: {$conflict->start_date} → {$conflict->end_date}";
 
-            return;
-        }
+                $this->data['conflict_details'] = $message;
 
-        if (!empty($data['user_id'])) {
-            $user = User::find($data['user_id']);
-        } else {
-            $user = User::create([
-                'name' => $data['guest_name'],
-                'email' => $data['guest_email'],
-                'phone' => $data['guest_phone'],
-                // 'password' => bcrypt(str()->random(10)),
-                'password' => bcrypt('password123'),
+                $this->data['occupied_calendar'] =
+                    implode("\n", BookingForm::getOccupiedRanges($data));
+
+                Notification::make()
+                    ->title('Booking Conflict')
+                    ->body('This apartment is already booked for the selected dates.')
+                    ->danger()
+                    ->send();
+
+                return;
+            }
+
+            if (!empty($data['user_id'])) {
+                $user = User::find($data['user_id']);
+            } else {
+                $user = User::create([
+                    'name' => $data['guest_name'],
+                    'email' => $data['guest_email'],
+                    'phone' => $data['guest_phone'],
+                    // 'password' => bcrypt(str()->random(10)),
+                    'password' => bcrypt('password123'),
+                ]);
+            }
+
+            if (isset($data['calculated_amount']) && $data['amount_received'] < $data['calculated_amount']) {
+                Notification::make()
+                    ->title('Insufficient Payment')
+                    ->body('Amount received is less than required booking amount.')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            $amount = $data['calculated_amount'] = str_replace(',', '', $data['calculated_amount']);
+            $booking = Booking::create([
+                'user_id' => $user->id,
+                'guest_name' => $user->name,
+                'guest_email' => $user->email,
+                'apartment_id' => $data['apartment'],
+                'start_date' => $data['start_date'],
+                'reference' => bookingReference(),
+                'end_date' => $data['end_date'],
+                'amount' => $amount,
+                'total_amount' => $amount,
+                'net_amount' => $amount,
+                'status' => BookingStatus::APPROVED,
             ]);
-        }
 
-        if (isset($data['calculated_amount']) && $data['amount_received'] < $data['calculated_amount']) {
+            $received = $data['amount_received'] = str_replace(',', '', $data['amount_received']);
+            BookingPayment::create([
+                'booking_id' => $booking->id,
+                'amount' => $received,
+                'payment_method' => $data['payment_method'],
+                'status' => PaymentStatus::SUCCESS->value,
+                'reference' => paymentReference(),
+                'response' => $data['admin_note'] ?? null,
+            ]);
+
             Notification::make()
-                ->title('Insufficient Payment')
-                ->body('Amount received is less than required booking amount.')
-                ->danger()
+                ->title('Booking Completed')
+                ->body('Walk-in booking completed successfully')
+                ->success()
                 ->send();
-            return;
+
+            $this->redirect(BookingResource::getUrl('index', [
+                'record' => $booking->id
+            ]));
+
+            // return $this->getResource()::getUrl('index', ['record' => $this->record->id]);
+
+        } finally {
+            $this->processing = false;
         }
-
-        $amount = $data['calculated_amount'] = str_replace(',', '', $data['calculated_amount']);
-        $booking = Booking::create([
-            'user_id' => $user->id,
-            'guest_name' => $user->name,
-            'guest_email' => $user->email,
-            'apartment_id' => $data['apartment'],
-            'start_date' => $data['start_date'],
-            'reference' => bookingReference(),
-            'end_date' => $data['end_date'],
-            'amount' => $amount,
-            'total_amount' => $amount,
-            'net_amount' => $amount,
-            'status' => BookingStatus::APPROVED,
-        ]);
-
-        $received = $data['amount_received'] = str_replace(',', '', $data['amount_received']);
-        BookingPayment::create([
-            'booking_id' => $booking->id,
-            'amount' => $received,
-            'payment_method' => $data['payment_method'],
-            'status' => PaymentStatus::SUCCESS->value,
-            'reference' => paymentReference(),
-            'response' => $data['admin_note'] ?? null,
-        ]);
-
-        Notification::make()
-            ->title('Booking Completed')
-            ->body('Walk-in booking completed successfully')
-            ->success()
-            ->send();
-
-        $this->redirect(BookingResource::getUrl('index', [
-            'record' => $booking->id
-        ]));
-
-        // return $this->getResource()::getUrl('index', ['record' => $this->record->id]);
     }
 }

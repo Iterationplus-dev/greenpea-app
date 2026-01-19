@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Invoice – {{ $invoice->number }}</title>
+    <title>Payment Reminder – {{ $invoice->number }}</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f6f9;font-family:Arial, sans-serif;">
 
@@ -14,9 +14,9 @@
 
         <!-- HEADER -->
         <tr>
-            <td style="background:#0d6efd;padding:25px;color:#fff;text-align:center;">
+            <td style="background:#dc3545;padding:25px;color:#fff;text-align:center;">
                 <h2 style="margin:0;">GreenPea Apartments</h2>
-                <p style="margin:5px 0 0;">Booking Invoice</p>
+                <p style="margin:5px 0 0;">Payment Reminder</p>
             </td>
         </tr>
 
@@ -27,8 +27,7 @@
                 <p>Hello <strong>{{ $booking->guest_name }}</strong>,</p>
 
                 <p>
-                    Thank you for choosing GreenPea Apartments.
-                    Your booking invoice has been generated successfully.
+                    This is a friendly reminder that an outstanding balance remains on your booking invoice.
                 </p>
 
                 <table width="100%" cellpadding="8" cellspacing="0" style="margin:20px 0;border:1px solid #eaeaea;">
@@ -36,21 +35,23 @@
                         <td><strong>Invoice Number:</strong></td>
                         <td>{{ $invoice->number }}</td>
                     </tr>
+
                     <tr>
                         <td><strong>Apartment:</strong></td>
                         <td>{{ $booking->apartment->name ?? 'N/A' }}</td>
                     </tr>
+
                     <tr>
-                        <td><strong>Check-in Date:</strong></td>
-                        <td>{{ $booking->start_date->format('M d, Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Check-out Date:</strong></td>
-                        <td>{{ $booking->end_date->format('M d, Y') }}</td>
+                        <td><strong>Stay Dates:</strong></td>
+                        <td>
+                            {{ $booking->start_date->format('M d, Y') }}
+                            →
+                            {{ $booking->end_date->format('M d, Y') }}
+                        </td>
                     </tr>
                 </table>
 
-                <h4>Invoice Summary</h4>
+                <h4>Outstanding Balance</h4>
 
                 <table width="100%" cellpadding="8" cellspacing="0" style="border:1px solid #eaeaea;">
                     <tr>
@@ -64,30 +65,43 @@
                     </tr>
 
                     <tr>
-                        <td>Balance Due:</td>
+                        <td><strong>Balance Due:</strong></td>
                         <td align="right">
-                            <strong>₦{{ number_format($invoice->balance_due, 2) }}</strong>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Status:</td>
-                        <td align="right">
-                            <strong>{{ ucfirst($invoice->status) }}</strong>
+                            <strong style="color:#dc3545;">
+                                ₦{{ number_format($invoice->balance_due, 2) }}
+                            </strong>
                         </td>
                     </tr>
                 </table>
 
                 <p style="margin-top:20px;">
-                    The full invoice PDF is attached to this email for your records.
+                    Please make payment at your earliest convenience to avoid any disruption to your reservation.
+                </p>
+
+                @if($booking->payment_link)
+                    <p style="text-align:center;margin:25px 0;">
+                        <a href="{{ $booking->payment_link }}"
+                           style="background:#0d6efd;color:#fff;padding:12px 20px;
+                                  text-decoration:none;border-radius:5px;">
+                            Pay Now
+                        </a>
+                    </p>
+                @endif
+
+                <p>
+                    The original invoice is attached to this email for your reference.
                 </p>
 
                 <p>
-                    If you have any questions, feel free to contact us at
+                    If you have already made payment, kindly ignore this reminder.
+                </p>
+
+                <p>
+                    For any assistance, contact us at
                     <strong>{{ config('mail.from.address') }}</strong>
                 </p>
 
-                <p>Warm regards,<br>
+                <p>Kind regards,<br>
                 <strong>GreenPea Apartments Team</strong></p>
 
             </td>

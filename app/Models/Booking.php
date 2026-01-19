@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Scopes\OwnerScope;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
@@ -50,6 +51,9 @@ class Booking extends Model
         'discount_amount' => 'decimal:2',
         'net_amount' => 'decimal:2',
         // 'status' => BookingStatus::class,
+        'is_fully_paid' => 'boolean',
+        'paid_at' => 'datetime',
+        'receipt_sent_at' => 'datetime',
     ];
 
 
@@ -103,7 +107,10 @@ class Booking extends Model
     public function paidAmount(): float
     {
         return (float) $this->payments()
-            ->where('status', 'paid')
+            ->whereIn('status', [
+                PaymentStatus::PAID->value,
+                PaymentStatus::SUCCESS->value,
+            ])
             ->sum('amount');
     }
 

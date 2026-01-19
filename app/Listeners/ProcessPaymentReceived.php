@@ -2,43 +2,49 @@
 
 namespace App\Listeners;
 
+use App\Enums\PaymentStatus;
 use App\Events\PaymentReceived;
-use Illuminate\Support\Facades\DB;
 use App\Services\WalletService;
-use App\Services\InvoiceService;
+use App\Mail\PaymentReceiptMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ProcessPaymentReceived
 {
-    public function __construct() {}
     public function handle(PaymentReceived $event)
     {
         DB::transaction(function () use ($event) {
 
             $payment = $event->payment->fresh();
 
-            // Safety
-            if ($payment->status !== 'success') {
+            // Only act on successful payments
+            if ($payment->status !== PaymentStatus::SUCCESS->value) {
                 return;
             }
 
             $booking = $payment->booking;
+
+            // At this point, observer has already ensured invoice exists
             $invoice = $booking->invoice;
 
-            // 1. Mark invoice paid
-            app(InvoiceService::class)->markAsPaid($invoice);
+            if (! $invoice) {
+                return;
+            }
 
-            // 2. Credit property owner
-            app(WalletService::class)->creditOwnerForBooking($booking);
+            // Credit owner wallet
+            app(WalletService::class)
+                ->creditOwnerForBooking($booking);
 
-            // 3. Mark booking fully paid
-            $booking->update([
-                'is_fully_paid' => true,
-                'paid_at' => now(),
-            ]);
 
-            //
-            app(InvoiceService::class)->markAsPaid($invoice);
-            app(InvoiceService::class)->finalizeInvoice($invoice);
+            // Send receipt if invoice is now fully paid
+            if ($invoice && $invoice->balance_due <= 0 && ! $booking->receipt_sent_at) {
+                Mail::to($booking->guest_email)
+                    ->send(new PaymentReceiptMail($invoice));
+
+                $booking->update([
+                    'receipt_sent_at' => now()
+                ]);
+            }
         });
     }
 }

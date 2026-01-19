@@ -131,6 +131,7 @@ class BookingForm
                     TextInput::make('amount_received')
                         ->required()
                         ->columns(1)
+                        ->autoComplete(false)
                         ->prefix(setting('currency'))
                         ->live(onBlur: true)
                         ->afterStateUpdated(function ($state, callable $set) {

@@ -25,13 +25,20 @@ class InvoiceService
 
             $platformFee = $this->calculatePlatformFee($booking->amount);
 
+            $paidSoFar = $booking->paidAmount();
+
             $invoice = Invoice::create([
                 'booking_id'    => $booking->id,
                 'number'     => $this->generateReference(),
+
                 'amount'        => $booking->amount,
                 'platform_fee'  => $platformFee,
                 'net_amount'    => $booking->amount - $platformFee,
-                'status'        => InvoiceStatus::PAID->value,
+
+                'amount_paid'  => $paidSoFar,
+                'balance_due'  => $booking->amount - $paidSoFar,
+
+                'status'        => $this->resolveStatus($booking->amount, $paidSoFar),
                 'issued_at'     => now(),
             ]);
 
@@ -45,81 +52,47 @@ class InvoiceService
         });
     }
 
-    /**
-     * Generate invoice PDF and upload to Cloudinary
-     */
-    // protected function generateAndUploadPdf(
-    //     Invoice $invoice,
-    //     Booking $booking
-    // ): string {
-    //     // 1Generate PDF
-    //     $pdf = Pdf::loadView('pdf.invoice2', [
-    //         'invoice' => $invoice,
-    //         'booking' => $booking,
-    //     ])->setPaper('a4');
-
-    //     // Save temp file
-    //     $tmpPath = storage_path("app/tmp/invoice-{$invoice->reference}.pdf");
-    //     file_put_contents($tmpPath, $pdf->output());
-
-    //     // Upload to Cloudinary (RAW)
-    //     $upload = Cloudinary::uploadApi()->upload(
-    //         $tmpPath,
-    //         [
-    //             'resource_type' => 'raw',
-    //             'folder'        => 'invoices',
-    //             'public_id'     => $invoice->reference,
-    //             'overwrite'     => true,
-    //         ]
-    //     );
-
-    //     // Cleanup
-    //     @unlink($tmpPath);
-
-    //     return $upload['secure_url'];
-    // }
-
     protected function generateAndUploadPdf(
         Invoice $invoice,
         Booking $booking
     ): string {
-        // ✅ Ensure invoice reference exists
-        if (empty($invoice->reference)) {
+        // Ensure invoice reference exists
+        if (empty($invoice->number)) {
             $invoice->update([
-                'reference' => 'INV-' . strtoupper(Str::random(10)),
+                'number' => $this->generateReference(),
             ]);
         }
 
-        // ✅ Ensure tmp directory exists
+        // Ensure tmp directory exists
         $tmpDir = storage_path('app/tmp');
         if (! is_dir($tmpDir)) {
             mkdir($tmpDir, 0755, true);
         }
 
-        // 1️⃣ Generate PDF
+        // Generate PDF
         $pdf = Pdf::loadView('pdf.invoice2', [
             'invoice' => $invoice,
             'booking' => $booking,
         ])->setPaper('a4');
 
-        // 2️⃣ Write temp file
-        $tmpPath = "{$tmpDir}/invoice-{$invoice->reference}.pdf";
+        // Write temp file
+        $tmpPath = "{$tmpDir}/invoice-{$invoice->number}.pdf";
 
         file_put_contents($tmpPath, $pdf->output());
 
-        // 3️⃣ Upload to Cloudinary (RAW)
+        // Upload to Cloudinary (RAW)
         $upload = Cloudinary::uploadApi()->upload(
             $tmpPath,
             [
                 'resource_type' => 'raw',
                 'folder'        => 'invoices',
-                'public_id'     => $invoice->reference,
+                'public_id'     => $invoice->number,
                 'overwrite'     => true,
                 'access_mode'   => 'public',
             ]
         );
 
-        // 4️⃣ Cleanup temp file
+        // Cleanup temp file
         @unlink($tmpPath);
 
         return $upload['secure_url'];
@@ -156,5 +129,33 @@ class InvoiceService
     protected function generateReference(): string
     {
         return 'INV-' . Str::upper(Str::random(10));
+    }
+
+    public function refreshInvoiceTotals(Invoice $invoice): void
+    {
+        if (! $invoice) {
+            return;
+        }
+        $paid = $invoice->booking->paidAmount();
+
+        $invoice->update([
+            'amount_paid' => $paid,
+            'balance_due' => $invoice->amount - $paid,
+            'status'      => $this->resolveStatus($invoice->amount, $paid),
+            'paid_at'     => $paid >= $invoice->amount ? now() : null,
+        ]);
+    }
+
+    protected function resolveStatus($total, $paid)
+    {
+        if ($paid <= 0) {
+            return InvoiceStatus::UNPAID->value;
+        }
+
+        if ($paid < $total) {
+            return InvoiceStatus::PARTIALLY_PAID->value;
+        }
+
+        return InvoiceStatus::PAID->value;
     }
 }

@@ -21,11 +21,15 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
-    protected static string|UnitEnum|null $navigationGroup = GroupLabel::SETTINGS;
+    protected static string|UnitEnum|null $navigationGroup = GroupLabel::ACCOUNT->value;
     protected static ?string $navigationLabel = 'Manage Permissions';
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?int $navigationSort = 4;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return strtoupper(GroupLabel::ACCOUNT->value);
+    }
     /**
      * Only Super Admins can manage permissions
      */

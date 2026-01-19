@@ -20,11 +20,15 @@ class Wallet extends Model
 
     public function getBalanceAttribute(): float
     {
-        return $this->transactions->sum(function ($t) {
-            return $t->type === 'credit'
-                ? $t->amount
-                : -$t->amount;
-        });
+        // return $this->transactions->sum(function ($t) {
+        //     return $t->type === 'credit'
+        //         ? $t->amount
+        //         : -$t->amount;
+        // });
+
+        return $this->transactions()
+            ->selectRaw("SUM(CASE WHEN type = 'credit' THEN amount ELSE -amount END) as balance")
+            ->value('balance') ?? 0;
     }
 
     public function user()
