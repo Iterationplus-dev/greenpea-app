@@ -44,6 +44,7 @@ class AppPanelProvider extends PanelProvider
             ->brandName('GreenPea')
             ->brandLogo(asset('img/greenpea-favicon.png'))
             ->brandLogoHeight('3rem')
+            ->homeUrl('http://greenpea-app.test')
             ->favicon(asset('img/greenpea-favicon.png'))
             // ->font('https://fonts.googleapis.com/css2?family=Macondo:wght@400;500;600;700&display=swap')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

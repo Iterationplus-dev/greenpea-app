@@ -143,9 +143,10 @@
             </div>
 
             <!-- Footer Bottom -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 py-6 text-xs text-white/40">
+            <div class="flex items-center gap-3 py-6 text-xs text-white/40">
                 <span>&copy; {{ date('Y') }} GreenPea Apartments. All rights reserved.</span>
-                <a href="http://admin.greenpea-app.test" class="hover:text-white/60 transition" rel="nofollow">Admin</a>
+                <span class="text-white/20">|</span>
+                <a href="{{ config('app.admin_url') }}" class="hover:text-white/60 transition" rel="nofollow">Admin</a>
             </div>
         </div>
     </footer>
