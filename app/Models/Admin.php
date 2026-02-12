@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Filament\Panel;
 use App\Enums\AdminRole;
 use App\Enums\AdminType;
 use App\Enums\AdminStatus;
 use App\Models\Concerns\AdminPermissions;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser
 {
     //
     use AdminPermissions;
@@ -34,6 +36,11 @@ class Admin extends Authenticatable
         'status' => AdminStatus::class,
         'compact_tables' => 'boolean',
     ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'app';
+    }
 
 
     //
