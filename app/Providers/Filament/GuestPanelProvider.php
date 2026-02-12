@@ -2,26 +2,24 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Guest\Pages\GuestRegister;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
-use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Filament\Http\Middleware\AuthenticateSession;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use App\Filament\Guest\Pages\GuestRegister;
-use Filament\Auth\Pages\Login;
-use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class GuestPanelProvider extends PanelProvider
 {
@@ -41,6 +39,7 @@ class GuestPanelProvider extends PanelProvider
             ->brandName('GreenPea Apartments')
             ->brandLogo(asset('img/greenpea-favicon.png'))
             ->brandLogoHeight('3rem')
+            ->homeUrl('/')
             ->favicon(asset('img/greenpea-favicon.png'))
             ->viteTheme('resources/css/filament/guest/theme.css')
             ->discoverResources(
@@ -76,7 +75,7 @@ class GuestPanelProvider extends PanelProvider
                     // ->formPanelBackgroundColor(Color::hex('#ffffff'))
                     ->emptyPanelBackgroundImageUrl('https://res.cloudinary.com/dney6qnzd/image/upload/v1767598377/guest-img-edited_rzdyoq.jpg')
                     ->emptyPanelBackgroundImageOpacity('90%')
-                    ->emptyPanelBackgroundColor(Color::Blue, '300')
+                    ->emptyPanelBackgroundColor(Color::Blue, '300'),
             ])
             ->middleware([
                 EncryptCookies::class,

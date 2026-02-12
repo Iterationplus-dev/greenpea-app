@@ -1,11 +1,7 @@
 
-/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Macondo&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Buda:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 @import 'tailwindcss';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -14,31 +10,139 @@
 @source '../**/*.js';
 @import '../../vendor/alperenersoy/filament-export/resources/css/filament-export.css';
 
-
-/* @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system;
-} */
-
-/* @theme {
-    --font-sans: 'Poppins', ui-sans-serif, system-ui;
-} */
-
-/* @theme {
-    --font-sans: 'Roboto', ui-sans-serif, system-ui, -apple-system;
-} *
-
-/* @theme {
-    --font-sans: 'Macondo', ui-sans-serif, system-ui;
-} */
-
 @theme {
-    --font-sans: 'Buda', ui-sans-serif, system-ui;
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system;
+    --font-display: 'DM Serif Display', Georgia, serif;
+
+    --color-brand-50: #f0fdf4;
+    --color-brand-100: #dcfce7;
+    --color-brand-200: #bbf7d0;
+    --color-brand-300: #86efac;
+    --color-brand-400: #4ade80;
+    --color-brand-500: #22c55e;
+    --color-brand-600: #16a34a;
+    --color-brand-700: #15803d;
+    --color-brand-800: #166534;
+    --color-brand-900: #14532d;
+
+    --color-navy: #1a2332;
+    --color-navy-light: #243447;
+    --color-warm: #faf7f2;
+    --color-warm-dark: #f0ebe3;
 }
 
-/* @theme {
-    --font-sans: 'Lato', ui-sans-serif, system-ui, -apple-system;
-} */
+/* Alpine.js cloak — hide elements until Alpine initializes */
+[x-cloak] {
+    display: none !important;
+}
 
-/* @theme {
-    --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system;
-} */
+/* Landing page custom styles */
+.font-display {
+    font-family: 'DM Serif Display', Georgia, serif;
+}
+
+/* Hero gradient overlay — lighter to let the image show through */
+.hero-overlay {
+    background: linear-gradient(135deg, rgba(22, 37, 52, 0.55) 0%, rgba(20, 83, 45, 0.35) 100%);
+}
+
+/* Search form glass effect */
+.search-glass {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Property card hover */
+.property-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* City pill active state */
+.city-pill-active {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+/* Smooth scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Flatpickr custom theme to match GreenPea brand */
+.flatpickr-calendar {
+    border-radius: 16px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+    border: 1px solid #e5e7eb !important;
+    font-family: 'DM Sans', ui-sans-serif, system-ui !important;
+    padding: 8px !important;
+}
+.flatpickr-months {
+    padding: 4px 0 !important;
+}
+.flatpickr-months .flatpickr-month {
+    height: 36px !important;
+}
+.flatpickr-current-month {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1a2332 !important;
+}
+.flatpickr-weekdays {
+    padding: 4px 0 !important;
+}
+span.flatpickr-weekday {
+    color: #9ca3af !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+.flatpickr-day {
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    color: #1a2332 !important;
+    line-height: 38px !important;
+    height: 38px !important;
+    max-width: 38px !important;
+}
+.flatpickr-day:hover {
+    background: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background: #16a34a !important;
+    border-color: #16a34a !important;
+    color: #fff !important;
+}
+.flatpickr-day.inRange {
+    background: #dcfce7 !important;
+    border-color: #dcfce7 !important;
+    box-shadow: -5px 0 0 #dcfce7, 5px 0 0 #dcfce7 !important;
+}
+.flatpickr-day.today:not(.selected) {
+    border-color: #16a34a !important;
+}
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: #d1d5db !important;
+}
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    fill: #1a2332 !important;
+    padding: 6px 10px !important;
+}
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: #16a34a !important;
+}

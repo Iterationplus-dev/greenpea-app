@@ -2,26 +2,35 @@
 
 namespace App\Filament\Guest\Pages;
 
-use Filament\Pages\Page;
-use App\Models\Apartment;
-use Filament\Actions\Action;
-use App\Services\BookingService;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\DatePicker;
 use App\Exceptions\BookingUnavailableException;
+use App\Models\Apartment;
+use App\Services\BookingService;
+use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Illuminate\Support\Facades\Auth;
 
 class CreateBooking extends Page
 {
     use InteractsWithForms;
+
     protected string $view = 'filament.guest.pages.create-booking';
 
+    protected static ?string $title = 'Complete Booking';
+
+    protected static bool $shouldRegisterNavigation = false;
+
     public ?array $intent = null;
+
     public ?Apartment $apartment = null;
+
+    public int $months = 1;
+
+    public float $totalAmount = 0;
 
     /** Form state */
     public array $data = [];
@@ -32,25 +41,31 @@ class CreateBooking extends Page
 
         abort_if(! $this->intent, 404);
 
-        $this->apartment = Apartment::findOrFail(
-            $this->intent['apartment_id']
+        $this->apartment = Apartment::with(['property', 'featuredImage'])
+            ->findOrFail($this->intent['apartment_id']);
+
+        $start = Carbon::parse($this->intent['start_date']);
+        $end = Carbon::parse($this->intent['end_date']);
+
+        $this->months = max(
+            ($end->year - $start->year) * 12 + ($end->month - $start->month),
+            1
         );
 
+        $this->totalAmount = $this->months * $this->apartment->monthly_price;
+
         $this->data = [
-            'guest_name'  => Auth::user()->name,
+            'guest_name' => Auth::user()->name,
             'guest_email' => Auth::user()->email,
-            'start_date'  => $this->intent['start_date'],
-            'end_date'    => $this->intent['end_date'],
+            'start_date' => $this->intent['start_date'],
+            'end_date' => $this->intent['end_date'],
         ];
     }
 
-    /**
-     * Filament v4 form schema
-     */
     protected function getFormSchema(): array
     {
         return [
-            Section::make('Booking Details')
+            Section::make('Guest Information')
                 ->schema([
                     TextInput::make('guest_name')
                         ->label('Full name')
@@ -62,54 +77,48 @@ class CreateBooking extends Page
                         ->required(),
 
                     DatePicker::make('start_date')
+                        ->label('Check-in date')
                         ->disabled()
                         ->required(),
 
                     DatePicker::make('end_date')
+                        ->label('Check-out date')
                         ->disabled()
                         ->required(),
                 ])
                 ->statePath('data'),
-
         ];
     }
 
-    /**
-     * Create booking
-     */
     public function create(): void
     {
-        $start = \Carbon\Carbon::parse($this->intent['start_date']);
-        $end   = \Carbon\Carbon::parse($this->intent['end_date']);
-        // Calculate months (minimum 1)
-        $months =
-            ($end->year - $start->year) * 12 +
-            ($end->month - $start->month);
+        $start = Carbon::parse($this->intent['start_date']);
+        $end = Carbon::parse($this->intent['end_date']);
 
-        $months = max($months, 1);
+        $months = max(
+            ($end->year - $start->year) * 12 + ($end->month - $start->month),
+            1
+        );
 
         $amount = $months * $this->apartment->monthly_price;
-
-        // dd('data ' . $amount . ' and ' . $end);
 
         try {
             app(BookingService::class)->create([
                 'apartment_id' => $this->apartment->id,
-                'guest_name'   => $this->data['guest_name'],
-                'guest_email'  => $this->data['guest_email'],
-                'user_id'      => Auth::id(),
-                'start_date'   => $this->intent['start_date'],
-                'end_date'     => $this->intent['end_date'],
-                'amount'       => $amount,
+                'guest_name' => $this->data['guest_name'],
+                'guest_email' => $this->data['guest_email'],
+                'user_id' => Auth::id(),
+                'start_date' => $this->intent['start_date'],
+                'end_date' => $this->intent['end_date'],
+                'amount' => $amount,
             ]);
         } catch (BookingUnavailableException $e) {
             Notification::make()
-                ->title("Apartment not available")
+                ->title('Apartment not available')
                 ->body($e->getMessage())
                 ->warning()
                 ->send();
 
-            // $this->halt();
             return;
         }
 

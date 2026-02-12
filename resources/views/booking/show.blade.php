@@ -1,141 +1,246 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+    {{-- Breadcrumb --}}
+    <nav class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+        <a href="/" class="hover:text-brand-600 transition">Home</a>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <a href="/#apartments" class="hover:text-brand-600 transition">{{ $apartment->property->city }}</a>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-gray-600">{{ $apartment->name }}</span>
+    </nav>
 
     {{-- Apartment Images --}}
     @if($apartment->images->count())
-        <div class="grid grid-cols-3 gap-2 mb-8">
-            {{-- Featured --}}
-            <div class="col-span-3">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-8 rounded-2xl overflow-hidden">
+            {{-- Featured Image --}}
+            <div class="md:col-span-2 md:row-span-2">
                 <img
                     src="{{ $apartment->featuredImageUrl }}"
                     alt="{{ $apartment->name }}"
-                    class="w-full h-72 object-cover rounded"
+                    class="w-full h-full min-h-70 md:min-h-100 object-cover"
                 >
             </div>
 
-            {{-- Gallery --}}
-            @foreach($apartment->images->where('is_featured', false) as $image)
-                <img
-                    src="{{ $image->url }}"
-                    alt="{{ $image->alt_text ?? $apartment->name }}"
-                    class="h-32 w-full object-cover rounded"
-                >
+            {{-- Gallery Images --}}
+            @foreach($apartment->images->where('is_featured', false)->take(4) as $image)
+                <div class="hidden md:block">
+                    <img
+                        src="{{ $image->url }}"
+                        alt="{{ $image->alt_text ?? $apartment->name }}"
+                        class="w-full h-49.5 object-cover"
+                    >
+                </div>
             @endforeach
         </div>
     @else
-        <img
-            src="{{ asset('img/placeholder.jpg') }}"
-            class="w-full h-72 object-cover rounded mb-8"
-        >
+        <div class="rounded-2xl overflow-hidden mb-8">
+            <img
+                src="{{ asset('img/placeholder.jpg') }}"
+                class="w-full h-72 object-cover"
+                alt="{{ $apartment->name }}"
+            >
+        </div>
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {{-- Apartment Info --}}
-        <div class="md:col-span-2">
-            <h1 class="text-2xl font-semibold mb-1">
-                {{ $apartment->name }}
-            </h1>
-
-            <p class="text-gray-500 mb-4">
-                {{ $apartment->property->city }}
-            </p>
-
-            <p class="text-gray-700 leading-relaxed mb-6">
-                {{ $apartment->description }}
-            </p>
-
-            <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                <div>Bedrooms: {{ $apartment->bedrooms }}</div>
-                <div>Bathrooms: {{ $apartment->bathrooms }}</div>
-                <div>Floor: {{ $apartment->floor ?? '—' }}</div>
-                <div>Size: {{ $apartment->square_feet ?? '—' }} sqft</div>
+        <div class="lg:col-span-2">
+            {{-- Title & Location --}}
+            <div class="mb-6">
+                <h1 class="font-display text-2xl sm:text-3xl text-navy mb-2">
+                    {{ $apartment->name }}
+                </h1>
+                <div class="flex items-center gap-2 text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span class="text-sm">{{ $apartment->property->city }}</span>
+                </div>
             </div>
+
+            {{-- Quick Stats --}}
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                @if($apartment->bedrooms)
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                        <svg class="w-5 h-5 text-brand-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
+                        <p class="text-lg font-bold text-navy">{{ $apartment->bedrooms }}</p>
+                        <p class="text-xs text-gray-400">{{ Str::plural('Bedroom', $apartment->bedrooms) }}</p>
+                    </div>
+                @endif
+                @if($apartment->bathrooms)
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                        <svg class="w-5 h-5 text-brand-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>
+                        <p class="text-lg font-bold text-navy">{{ $apartment->bathrooms }}</p>
+                        <p class="text-xs text-gray-400">{{ Str::plural('Bathroom', $apartment->bathrooms) }}</p>
+                    </div>
+                @endif
+                @if($apartment->floor)
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                        <svg class="w-5 h-5 text-brand-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <p class="text-lg font-bold text-navy">{{ $apartment->floor }}</p>
+                        <p class="text-xs text-gray-400">Floor</p>
+                    </div>
+                @endif
+                @if($apartment->square_feet)
+                    <div class="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                        <svg class="w-5 h-5 text-brand-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        <p class="text-lg font-bold text-navy">{{ number_format($apartment->square_feet) }}</p>
+                        <p class="text-xs text-gray-400">Sq. Ft.</p>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Description --}}
+            @if($apartment->description)
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold text-navy mb-3">About this apartment</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        {{ $apartment->description }}
+                    </p>
+                </div>
+            @endif
         </div>
 
         {{-- Booking Card --}}
-        <div
-            class="bg-white border rounded-lg p-4"
-            x-data="{
-                start: '',
-                end: '',
-                price: {{ (int) $apartment->monthly_price }},
-                total: {{ (int) $apartment->monthly_price }},
-                calc() {
-                    if (!this.start || !this.end) {
-                        this.total = this.price
-                        return
+        <div class="lg:col-span-1">
+            <div
+                class="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24 shadow-sm"
+                x-data="{
+                    start: '',
+                    end: '',
+                    startISO: '',
+                    endISO: '',
+                    price: {{ (int) $apartment->monthly_price }},
+                    total: {{ (int) $apartment->monthly_price }},
+                    fpIn: null,
+                    fpOut: null,
+                    calc() {
+                        if (!this.startISO || !this.endISO) {
+                            this.total = this.price
+                            return
+                        }
+                        let s = new Date(this.startISO)
+                        let e = new Date(this.endISO)
+                        let months =
+                            (e.getFullYear() - s.getFullYear()) * 12 +
+                            (e.getMonth() - s.getMonth())
+                        this.total = Math.max(months, 1) * this.price
+                    },
+                    initDates() {
+                        this.fpIn = window.flatpickr(this.$refs.startDate, {
+                            dateFormat: 'M d, Y',
+                            altInput: false,
+                            minDate: 'today',
+                            disableMobile: true,
+                            monthSelectorType: 'static',
+                            onChange: (dates, str) => {
+                                this.start = str;
+                                this.startISO = dates[0] ? dates[0].toISOString().split('T')[0] : '';
+                                this.$refs.startDateHidden.value = this.startISO;
+                                if (this.fpOut) { this.fpOut.set('minDate', dates[0]); }
+                                this.calc();
+                            },
+                        });
+                        this.fpOut = window.flatpickr(this.$refs.endDate, {
+                            dateFormat: 'M d, Y',
+                            altInput: false,
+                            minDate: 'today',
+                            disableMobile: true,
+                            monthSelectorType: 'static',
+                            onChange: (dates, str) => {
+                                this.end = str;
+                                this.endISO = dates[0] ? dates[0].toISOString().split('T')[0] : '';
+                                this.$refs.endDateHidden.value = this.endISO;
+                                this.calc();
+                            },
+                        });
                     }
-
-                    let s = new Date(this.start)
-                    let e = new Date(this.end)
-
-                    let months =
-                        (e.getFullYear() - s.getFullYear()) * 12 +
-                        (e.getMonth() - s.getMonth())
-
-                    this.total = Math.max(months, 1) * this.price
-                }
-            }"
-        >
-            <p class="text-lg font-semibold mb-2">
-                ₦{{ number_format($apartment->monthly_price) }} / month
-            </p>
-
-            <form
-                method="POST"
-                action="{{ route('booking.intent', $apartment) }}"
-                class="space-y-4"
+                }"
+                x-init="initDates()"
             >
-                @csrf
-
-                <div>
-                    <label class="block text-sm mb-1">Start Date</label>
-                    <input
-                        type="date"
-                        name="start_date"
-                        x-model="start"
-                        @change="calc"
-                        required
-                        class="w-full border rounded p-2"
-                    >
+                {{-- Price --}}
+                <div class="mb-5">
+                    <span class="text-2xl font-bold text-navy">
+                        &#8358;{{ number_format($apartment->monthly_price) }}
+                    </span>
+                    <span class="text-sm text-gray-400"> / month</span>
                 </div>
 
-                <div>
-                    <label class="block text-sm mb-1">End Date</label>
-                    <input
-                        type="date"
-                        name="end_date"
-                        x-model="end"
-                        @change="calc"
-                        required
-                        class="w-full border rounded p-2"
-                    >
-                </div>
-
-                <div class="bg-gray-100 rounded p-3">
-                    <p class="text-sm text-gray-600">Estimated Total</p>
-                    <p class="text-lg font-bold text-green-600">
-                        ₦<span x-text="total.toLocaleString()"></span>
-                    </p>
-                </div>
-
-                <button
-                    type="submit"
-                    class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                <form
+                    method="POST"
+                    action="{{ route('booking.intent', $apartment) }}"
+                    class="space-y-4"
                 >
-                    Continue Booking
-                </button>
+                    @csrf
 
-                <p class="text-xs text-gray-500 text-center">
-                    You’ll be asked to log in or register to complete your booking.
-                </p>
-            </form>
+                    {{-- Check-in --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-in</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <input
+                                type="text"
+                                x-ref="startDate"
+                                readonly
+                                required
+                                placeholder="Select date"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent cursor-pointer"
+                            >
+                            <input type="hidden" name="start_date" x-ref="startDateHidden">
+                        </div>
+                    </div>
+
+                    {{-- Check-out --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Check-out</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <input
+                                type="text"
+                                x-ref="endDate"
+                                readonly
+                                required
+                                placeholder="Select date"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent cursor-pointer"
+                            >
+                            <input type="hidden" name="end_date" x-ref="endDateHidden">
+                        </div>
+                    </div>
+
+                    {{-- Estimated Total --}}
+                    <div class="bg-brand-50 rounded-xl p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Estimated Total</span>
+                            <span class="text-xl font-bold text-brand-700">
+                                &#8358;<span x-text="total.toLocaleString()"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Submit --}}
+                    <button
+                        type="submit"
+                        class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-3.5 rounded-full transition text-sm"
+                    >
+                        Continue Booking
+                    </button>
+
+                    <p class="text-xs text-gray-400 text-center leading-relaxed">
+                        You'll be asked to sign in or create an account to complete your booking.
+                    </p>
+                </form>
+            </div>
         </div>
 
     </div>
 </div>
 @endsection
-

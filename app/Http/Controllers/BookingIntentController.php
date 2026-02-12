@@ -12,7 +12,7 @@ class BookingIntentController extends Controller
     {
         $request->validate([
             'start_date' => ['required', 'date'],
-            'end_date'   => ['required', 'date', 'after:start_date'],
+            'end_date' => ['required', 'date', 'after:start_date'],
         ]);
 
         // session([
@@ -25,29 +25,28 @@ class BookingIntentController extends Controller
 
         session()->put('booking.intent', [
             'apartment_id' => $apartment->id,
-            'start_date'   => $request->start_date,
-            'end_date'     => $request->end_date,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
         ]);
 
         session()->save();
 
-        //auth()->check()
         if (! Auth::check()) {
-            // return redirect()->to('guest/register')
             return redirect()->route('filament.guest.auth.register')
                 ->with('info', 'Create an account to continue your booking.');
         }
 
-        return redirect()->route('booking.confirm');
+        return redirect()->to('/guest/continue-booking');
     }
 
     public function confirm()
     {
         $intent = session('booking.intent');
         abort_if(! $intent, 404);
+
         return view('booking.confirm', [
             'apartment' => Apartment::findOrFail($intent['apartment_id']),
-            'intent'    => $intent,
+            'intent' => $intent,
         ]);
     }
 }
