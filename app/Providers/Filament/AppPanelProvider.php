@@ -2,20 +2,20 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Panel;
-use Filament\PanelProvider;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use Filament\Panel;
+use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
 {
@@ -25,27 +25,22 @@ class AppPanelProvider extends PanelProvider
             ->default()
             // ->id('getMultiFactorAuthenticationRequiredMiddlewareName')
             ->id('app')
-            // ->domain('admin.greenpea.test')
-            // ->domain('admin.greenpea-app.test')
-            ->domain('app.greenpeaapartments.com')
+            ->domain(parse_url(config('app.admin_url'), PHP_URL_HOST))
             ->path('/')
-            // ->path('app')
             ->login()
             ->authGuard('admin')
-            // ->authMiddleware(['auth'])//single guard
             ->authMiddleware([
                 Authenticate::class,
             ])
 
             ->colors([
                 'primary' => Color::Emerald,
-                //'primary' => '#16a34a', // optional
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
             ->brandName('GreenPea')
             ->brandLogo(asset('img/greenpea-favicon.png'))
             ->brandLogoHeight('3rem')
-            ->homeUrl('https://app.greenpeaapartments.com')
+            ->homeUrl(config('app.url'))
             ->favicon(asset('img/greenpea-favicon.png'))
             // ->font('https://fonts.googleapis.com/css2?family=Macondo:wght@400;500;600;700&display=swap')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
@@ -53,7 +48,7 @@ class AppPanelProvider extends PanelProvider
             ->pages([
                 // Dashboard::class,
                 \App\Filament\Pages\Dashboard::class,
-                 \App\Filament\Pages\WalkInBookingWizard::class,
+                \App\Filament\Pages\WalkInBookingWizard::class,
             ])
             ->sidebarWidth('16rem')
             ->sidebarCollapsibleOnDesktop(false)
@@ -74,7 +69,7 @@ class AppPanelProvider extends PanelProvider
                     // ->formPanelBackgroundColor(Color::hex('#ffffff'))
                     ->emptyPanelBackgroundImageUrl('https://res.cloudinary.com/dney6qnzd/image/upload/v1766563654/hotel-apartments-view-edited_axyf9u.jpg')
                     ->emptyPanelBackgroundImageOpacity('90%')
-                    ->emptyPanelBackgroundColor(Color::Green, '300')
+                    ->emptyPanelBackgroundColor(Color::Green, '300'),
             ])
             ->middleware([
                 EncryptCookies::class,

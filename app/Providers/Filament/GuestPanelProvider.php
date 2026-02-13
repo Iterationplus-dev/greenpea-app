@@ -39,7 +39,7 @@ class GuestPanelProvider extends PanelProvider
             ->brandLogo(asset('img/greenpea-favicon.png'))
             ->brandLogoHeight('3rem')
             ->sidebarWidth('15rem')
-            ->homeUrl('/')
+            ->homeUrl(config('app.url'))
             ->favicon(asset('img/greenpea-favicon.png'))
             ->viteTheme('resources/css/filament/guest/theme.css')
             ->discoverResources(
