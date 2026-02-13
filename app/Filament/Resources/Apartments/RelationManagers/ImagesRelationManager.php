@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Apartments\RelationManagers;
 
-use App\services\ApartmentImageService;
+use App\Services\ApartmentImageService;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;

@@ -2,20 +2,16 @@
 
 namespace App\Filament\Resources\Apartments\Pages;
 
+use App\Filament\Resources\Apartments\ApartmentResource;
+use App\Services\ApartmentImageService;
 use Filament\Actions\Action;
-use App\services\ApartmentImageService;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Forms\Components\CloudinaryUpload;
-use App\Filament\Resources\Apartments\ApartmentResource;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateApartment extends CreateRecord
 {
     protected static string $resource = ApartmentResource::class;
-
-
-
 
     public function canCreateAnother(): bool
     {
@@ -27,7 +23,6 @@ class CreateApartment extends CreateRecord
         return parent::getCreateFormAction()
             ->label('Create Apartment');
     }
-
 
     // protected function mutateFormDataBeforeCreate(array $data): array
     // {
@@ -48,7 +43,6 @@ class CreateApartment extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
 
     protected function handleRecordCreation(array $data): Model
     {
