@@ -2,30 +2,31 @@
 
 namespace App\Filament\Resources\Apartments\RelationManagers;
 
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use App\services\ApartmentImageService;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Schemas\Components\Grid;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DissociateAction;
-use App\services\ApartmentImageService;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
 
 class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
+
     protected static ?string $title = 'Apartment Images';
 
     public function form(Schema $schema): Schema
@@ -80,12 +81,18 @@ class ImagesRelationManager extends RelationManager
 
             ->headerActions([
                 CreateAction::make()
-                    ->label("New Image")
+                    ->label('New Image')
                     ->size('sm')
                     ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
                     ->icon('heroicon-o-plus')
                     ->createAnother(false)
-                    ->modalSubmitActionLabel('Save Image'),
+                    ->modalSubmitActionLabel('Save Image')
+                    ->successNotification(
+                        Notification::make()
+                            ->success()
+                            ->title('Image Added')
+                            ->body('The apartment image has been uploaded successfully.')
+                    ),
                 AssociateAction::make()
                     ->size('sm')
                     ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
@@ -106,18 +113,36 @@ class ImagesRelationManager extends RelationManager
                                     [$data['image']],
                                     $data['alt_text'] ?? null
                                 );
-                        }),
+                        })
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Image Added')
+                                ->body('The apartment image has been uploaded successfully.')
+                        ),
                     EditAction::make()
                         ->size('sm')
-                        ->extraAttributes(['class' => 'text-xs px-3 py-1.5']),
+                        ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Image Updated')
+                                ->body('The apartment image details have been updated.')
+                        ),
                     DissociateAction::make()
                         ->size('sm')
                         ->extraAttributes(['class' => 'text-xs px-3 py-1.5']),
                     DeleteAction::make()
                         ->size('sm')
                         ->extraAttributes(['class' => 'text-xs px-3 py-1.5'])
-                        ->visible(fn($record) => ! $record->is_featured),
-                ])
+                        ->visible(fn ($record) => ! $record->is_featured)
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Image Deleted')
+                                ->body('The apartment image has been deleted successfully.')
+                        ),
+                ]),
             ]);
         // ->toolbarActions([
         //     BulkActionGroup::make([
