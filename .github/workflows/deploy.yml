@@ -60,9 +60,6 @@ jobs:
           php artisan optimize
           php artisan filament:optimize
 
-          echo "Fixing permissions..."
-          sudo chown -R www-data:www-data storage bootstrap/cache
-
           echo "Restarting queues..."
           php artisan queue:restart
 
