@@ -7,7 +7,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+    - name: Debug - Print host
+      run: echo "Host is: ${{ secrets.HOST }}"
+
+    - name: Debug - Check secrets present
+      run: |
+        if [ -z "${{ secrets.HOST }}" ]; then echo "HOST is empty"; fi
+        if [ -z "${{ secrets.USER }}" ]; then echo "USER is empty"; fi
+        if [ -z "${{ secrets.KEY }}" ]; then echo "KEY is empty"; fi
+
     - name: Deploy to PRODUCTION
       uses: appleboy/ssh-action@v1.2.0
       with:
@@ -18,28 +28,20 @@ jobs:
           set -e
           cd /var/www/apps/greenpea/greenpea-app
 
-          # Enable maintenance mode
-          php artisan down --refresh=15
+          php artisan down --refresh=15 || true
 
-          # Pull latest code
           git pull origin main
 
-          # Install PHP dependencies
           composer install --no-dev --no-interaction --optimize-autoloader
 
-          # Install and build frontend assets
           npm ci --no-audit
           npm run build
 
-          # Run database migrations
           php artisan migrate --no-interaction --force
 
-          # Cache config, routes, views, and events
           php artisan optimize
           php artisan filament:optimize
 
-          # Restart queue workers
           php artisan queue:restart
 
-          # Disable maintenance mode
-          php artisan up
+          php artisan up || true
