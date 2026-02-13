@@ -9,14 +9,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Debug - Print host
-      run: echo "Host is: ${{ secrets.HOST }}"
-
-    - name: Debug - Check secrets present
+    - name: Verify secrets are configured
       run: |
-        if [ -z "${{ secrets.HOST }}" ]; then echo "HOST is empty"; fi
-        if [ -z "${{ secrets.USER }}" ]; then echo "USER is empty"; fi
-        if [ -z "${{ secrets.KEY }}" ]; then echo "KEY is empty"; fi
+        missing=""
+        if [ -z "$HOST" ]; then missing="$missing HOST"; fi
+        if [ -z "$USER" ]; then missing="$missing USER"; fi
+        if [ -z "$KEY" ]; then missing="$missing KEY"; fi
+        if [ -n "$missing" ]; then
+          echo "::error::Missing required secrets:$missing"
+          exit 1
+        fi
+        echo "All required secrets are configured."
+      env:
+        HOST: ${{ secrets.HOST }}
+        USER: ${{ secrets.USER }}
+        KEY: ${{ secrets.KEY }}
 
     - name: Deploy to PRODUCTION
       uses: appleboy/ssh-action@v1.2.0
