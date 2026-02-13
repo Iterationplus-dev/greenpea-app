@@ -12,13 +12,13 @@
 <body class="bg-warm text-gray-800 antialiased">
 
     <!-- Navigation -->
-    <header class="bg-navy text-white sticky top-0 z-50" x-data="{ mobileOpen: false }">
+    <header class="bg-brand-600 text-white sticky top-0 z-50" x-data="{ mobileOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <!-- Primary Nav -->
             <div class="flex items-center justify-between h-16 sm:h-18">
                 <!-- Logo -->
                 <a href="/" class="flex items-center gap-2">
-                    <img src="{{ asset('img/greenpea-favicon.png') }}" alt="GreenPea" class="h-8 w-8 rounded-full">
+                    <img src="{{ asset('img/greenpea-favicon.png') }}" alt="GreenPea" class="h-8 w-8 rounded-full brightness-0 invert">
                     <span class="text-lg font-bold tracking-tight">GreenPea</span>
                 </a>
 
@@ -32,11 +32,11 @@
                 <!-- Desktop Actions -->
                 <div class="hidden md:flex items-center gap-3">
                     <a href="/guest/login"
-                       class="px-4 py-2 text-sm font-medium text-white/90 hover:text-white transition rounded-full border border-white/20 hover:border-white/40">
+                       class="px-5 py-2 text-sm font-medium text-white transition rounded-full border border-white/30 hover:border-white hover:bg-white/10">
                         Sign In
                     </a>
                     <a href="/guest/register"
-                       class="px-4 py-2 text-sm font-medium bg-brand-500 hover:bg-brand-600 text-white rounded-full transition">
+                       class="px-5 py-2 text-sm font-medium bg-white text-brand-700 hover:bg-white/90 rounded-full transition">
                         List with Us
                     </a>
                 </div>
@@ -60,13 +60,13 @@
                     <a href="/#cities" class="px-3 py-2 rounded-lg text-white/90 hover:bg-white/10 transition">Cities</a>
                     <hr class="border-white/10 my-2">
                     <a href="/guest/login" class="px-3 py-2 rounded-lg text-white/90 hover:bg-white/10 transition">Sign In</a>
-                    <a href="/guest/register" class="px-3 py-2 rounded-lg bg-brand-500 text-white text-center hover:bg-brand-600 transition">List with Us</a>
+                    <a href="/guest/register" class="px-3 py-2 rounded-lg bg-white text-brand-700 text-center font-medium hover:bg-white/90 transition">List with Us</a>
                 </nav>
             </div>
         </div>
 
         <!-- Secondary Nav: City Indicator -->
-        <div class="bg-navy-light border-t border-white/5">
+        <div class="bg-navy border-t border-white/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="flex items-center gap-6 h-10 text-xs font-medium text-white/60 overflow-x-auto hide-scrollbar">
                     <span class="flex items-center gap-1.5">
@@ -164,6 +164,7 @@
         </svg>
         <span class="text-sm font-semibold hidden sm:inline">Chat with us</span>
     </a>
-
+{{-- --green-dark: #166534; --}}
+      {{-- --green-main: #16a34a; --}}
 </body>
 </html>

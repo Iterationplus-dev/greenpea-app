@@ -2,13 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Guest\Pages\Dashboard;
 use App\Filament\Guest\Pages\GuestRegister;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -29,16 +29,16 @@ class GuestPanelProvider extends PanelProvider
             ->id('guest')
             ->path('guest')
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Emerald,
             ])
             ->login()
             ->registration()
             ->passwordReset()
-
             ->authGuard('web') //
             ->brandName('GreenPea Apartments')
             ->brandLogo(asset('img/greenpea-favicon.png'))
             ->brandLogoHeight('3rem')
+            ->sidebarWidth('15rem')
             ->homeUrl('/')
             ->favicon(asset('img/greenpea-favicon.png'))
             ->viteTheme('resources/css/filament/guest/theme.css')
