@@ -146,7 +146,7 @@
             <div class="flex items-center gap-3 py-6 text-xs text-white/40">
                 <span>&copy; {{ date('Y') }} GreenPea Apartments. All rights reserved.</span>
                 <span class="text-white/20">|</span>
-                <a href="{{ config('app.admin_url') }}" class="hover:text-white/60 transition" rel="nofollow">Admin</a>
+                <a href="{{ config('app.admin_url') }}" class="hover:text-white/60 transition" rel="nofollow">Admins Access</a>
             </div>
         </div>
     </footer>

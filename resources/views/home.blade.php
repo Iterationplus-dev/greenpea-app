@@ -234,16 +234,16 @@
                                 <div class="flex items-center gap-3">
                                     <button type="button"
                                             @click.stop="guests > 1 && guests--"
-                                            class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-brand-500 hover:text-brand-600 transition"
+                                            class="w-9 h-9 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-brand-500 hover:text-brand-600 transition"
                                             :class="guests <= 1 && 'opacity-30 cursor-not-allowed'">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg>
                                     </button>
-                                    <span class="text-sm font-semibold w-6 text-center" x-text="guests"></span>
+                                    <span class="text-base font-bold w-6 text-center" x-text="guests"></span>
                                     <button type="button"
-                                            @click.stop="guests < 8 && guests++"
-                                            class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-brand-500 hover:text-brand-600 transition"
-                                            :class="guests >= 8 && 'opacity-30 cursor-not-allowed'">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                            @click.stop="guests < 7 && guests++"
+                                            class="w-9 h-9 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-brand-500 hover:text-brand-600 transition"
+                                            :class="guests >= 7 && 'opacity-30 cursor-not-allowed'">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                                     </button>
                                 </div>
                             </div>
