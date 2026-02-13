@@ -1,12 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\WalletController;
 use App\Http\Controllers\BookingIntentController;
 use App\Http\Controllers\BookingPaymentController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PaystackCallbackController;
+use App\Http\Controllers\WalletController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::view('/faqs', 'faqs')->name('faqs');
 Route::get('/apartments/{apartment}', [\App\Http\Controllers\BookingController::class, 'show']);
 Route::post('/book/{apartment}', [\App\Http\Controllers\BookingController::class, 'store']);
 Route::get('/booking/{booking}/pay', [\App\Http\Controllers\BookingController::class, 'pay']);
@@ -14,10 +18,8 @@ Route::get('/booking/{booking}/pay', [\App\Http\Controllers\BookingController::c
 Route::post('/booking/intent/{apartment}', [BookingIntentController::class, 'store'])
     ->name('booking.intent');
 
-
 Route::post('/paystack/webhook', [\App\Http\Controllers\PaystackWebhookController::class, 'handle'])
     ->name('paystack.webhook');
-
 
 Route::domain('admin.greenpea-app.test')->group(function () {
     // Filament auto registers its routes here
@@ -32,7 +34,6 @@ Route::get('/bookings/{booking}/pay', [BookingPaymentController::class, 'pay'])
     ->name('bookings.pay');
 Route::get('/payments/paystack/callback', [PaystackCallbackController::class, 'handle'])
     ->name('paystack.callback');
-
 
 Route::get('/wallet/paystack/init', [WalletController::class, 'init'])
     ->name('wallet.paystack.init');
