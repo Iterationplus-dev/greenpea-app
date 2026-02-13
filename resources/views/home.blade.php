@@ -415,7 +415,7 @@
                 {{-- Cards Grid --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     @forelse($list as $apartment)
-                        <a href="{{ url('/apartments/'.$apartment->id) }}" class="property-card bg-white rounded-2xl overflow-hidden border border-gray-100 block">
+                        <a href="{{ url('/apartments/'.$apartment->slug) }}" class="property-card bg-white rounded-2xl overflow-hidden border border-gray-100 block">
                             {{-- Image --}}
                             <div class="relative aspect-[4/3] overflow-hidden">
                                 <img

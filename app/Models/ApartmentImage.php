@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Database\Eloquent\Model;
 
 class ApartmentImage extends Model
 {
     //
     protected $table = 'apartment_images';
+
     protected $fillable = [
         'apartment_id',
         'image_path',
@@ -38,6 +39,14 @@ class ApartmentImage extends Model
             ->toUrl();
     }
 
+    public function getMobileUrlAttribute(): string
+    {
+        return Cloudinary::image($this->image_path)
+            ->resize(\Cloudinary\Transformation\Resize::fill(800, 500))
+            ->delivery(\Cloudinary\Transformation\Delivery::quality('auto'))
+            ->delivery(\Cloudinary\Transformation\Delivery::format('auto'))
+            ->toUrl();
+    }
 
     public static function booted()
     {
@@ -55,7 +64,6 @@ class ApartmentImage extends Model
             }
         });
     }
-
 
     /* RELATIONSHIPS */
 

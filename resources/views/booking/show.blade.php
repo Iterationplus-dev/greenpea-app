@@ -14,23 +14,92 @@
 
     {{-- Apartment Images --}}
     @if($apartment->images->count())
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-8 rounded-2xl overflow-hidden">
+        @php
+            $allImages = $apartment->images->sortByDesc('is_featured')->values();
+        @endphp
+
+        {{-- Mobile Gallery (swipeable carousel) --}}
+        <div class="md:hidden mb-8 rounded-2xl overflow-hidden"
+             x-data="{
+                 current: 0,
+                 total: {{ $allImages->count() }},
+                 touchStartX: 0,
+                 touchEndX: 0,
+                 next() { this.current = (this.current + 1) % this.total },
+                 prev() { this.current = (this.current - 1 + this.total) % this.total },
+                 handleSwipe() {
+                     const diff = this.touchStartX - this.touchEndX;
+                     if (Math.abs(diff) > 50) { diff > 0 ? this.next() : this.prev() }
+                 }
+             }"
+             @touchstart="touchStartX = $event.changedTouches[0].screenX"
+             @touchend="touchEndX = $event.changedTouches[0].screenX; handleSwipe()"
+        >
+            <div class="relative">
+                @foreach($allImages as $index => $image)
+                    <img
+                        x-show="current === {{ $index }}"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        src="{{ $image->mobile_url }}"
+                        alt="{{ $image->alt_text ?? $apartment->name }}"
+                        class="w-full h-72 object-cover"
+                        loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                        {{ $index !== 0 ? 'style=display:none' : '' }}
+                    >
+                @endforeach
+
+                {{-- Navigation Arrows --}}
+                @if($allImages->count() > 1)
+                    <button @click="prev()" class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white transition">
+                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button @click="next()" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white transition">
+                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+
+                    {{-- Dot Indicators --}}
+                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                        @foreach($allImages as $index => $image)
+                            <button
+                                @click="current = {{ $index }}"
+                                class="w-2 h-2 rounded-full transition"
+                                :class="current === {{ $index }} ? 'bg-white w-4' : 'bg-white/50'"
+                            ></button>
+                        @endforeach
+                    </div>
+
+                    {{-- Counter --}}
+                    <span class="absolute top-3 right-3 bg-black/50 text-white text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur"
+                          x-text="(current + 1) + ' / {{ $allImages->count() }}'">
+                    </span>
+                @endif
+            </div>
+        </div>
+
+        {{-- Desktop Grid --}}
+        <div class="hidden md:grid md:grid-cols-4 gap-2 mb-8 rounded-2xl overflow-hidden">
             {{-- Featured Image --}}
             <div class="md:col-span-2 md:row-span-2">
                 <img
                     src="{{ $apartment->featuredImageUrl }}"
                     alt="{{ $apartment->name }}"
-                    class="w-full h-full min-h-70 md:min-h-100 object-cover"
+                    class="w-full h-full min-h-100 object-cover"
                 >
             </div>
 
             {{-- Gallery Images --}}
             @foreach($apartment->images->where('is_featured', false)->take(4) as $image)
-                <div class="hidden md:block">
+                <div>
                     <img
                         src="{{ $image->url }}"
                         alt="{{ $image->alt_text ?? $apartment->name }}"
                         class="w-full h-49.5 object-cover"
+                        loading="lazy"
                     >
                 </div>
             @endforeach

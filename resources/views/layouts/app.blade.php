@@ -153,7 +153,7 @@
 
     <!-- WhatsApp Chat Button -->
     <a
-        href="https://wa.me/2348000000000?text=Hello%20GreenPea%2C%20I%20need%20help%20with%20booking%20an%20apartment."
+        href="https://wa.me/23480?text=Hello%20GreenPea%2C%20I%20need%20help%20with%20booking%20an%20apartment."
         target="_blank"
         rel="noopener noreferrer"
         class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe57] text-white pl-4 pr-5 py-3 rounded-full shadow-lg hover:shadow-xl transition group"

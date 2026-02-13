@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use App\Enums\BookingStatus;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Apartment extends Model
 {
     //
     protected $table = 'apartments';
+
     protected $fillable = [
         'property_id',
         'name',
+        'slug',
         'description',
         'monthly_price',
         'unit_number',
@@ -22,6 +25,39 @@ class Apartment extends Model
         'square_feet',
         'is_available',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Apartment $apartment) {
+            if (empty($apartment->slug)) {
+                $apartment->slug = static::generateUniqueSlug($apartment->name);
+            }
+        });
+
+        static::updating(function (Apartment $apartment) {
+            if ($apartment->isDirty('name') && ! $apartment->isDirty('slug')) {
+                $apartment->slug = static::generateUniqueSlug($apartment->name, $apartment->id);
+            }
+        });
+    }
+
+    protected static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name);
+        $original = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+            $slug = $original.'-'.$count++;
+        }
+
+        return $slug;
+    }
 
     protected $casts = [
         'monthly_price' => 'decimal:2',
