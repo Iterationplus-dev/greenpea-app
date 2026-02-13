@@ -25,7 +25,7 @@ class AppPanelProvider extends PanelProvider
             ->default()
             // ->id('getMultiFactorAuthenticationRequiredMiddlewareName')
             ->id('app')
-            ->domain(config('app.admin_url'))
+            ->domain(parse_url(config('app.admin_url'), PHP_URL_HOST))
             ->path('/')
             ->login()
             ->authGuard('admin')
