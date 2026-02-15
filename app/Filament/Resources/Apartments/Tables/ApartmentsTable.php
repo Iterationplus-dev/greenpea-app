@@ -96,8 +96,8 @@ class ApartmentsTable
 
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->chunkSelectedRecords(10),
+                    // DeleteBulkAction::make()
+                        // ->chunkSelectedRecords(10),
                 ]),
             ]);
     }

@@ -59,7 +59,7 @@ class ApartmentImagesTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                // EditAction::make(),
                 DeleteAction::make()
                     ->successNotification(
                         Notification::make()

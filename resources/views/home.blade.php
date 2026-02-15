@@ -26,7 +26,7 @@
         </div>
 
         {{-- ===== SEARCH FORM (Hotels.com style) ===== --}}
-        <div class="search-glass rounded-2xl p-4 sm:p-6 max-w-4xl"
+        <div class="search-glass rounded-2xl p-4 sm:p-6 max-w-6xl"
              x-data="{
                  city: '',
                  cityQuery: '',

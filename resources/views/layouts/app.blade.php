@@ -39,7 +39,7 @@
                     </a>
                     <a href="/guest/register"
                        class="px-5 py-2 text-sm font-medium bg-white text-brand-700 hover:bg-white/90 rounded-full transition">
-                        List with Us
+                        Sign Up
                     </a>
                 </div>
 
@@ -64,7 +64,7 @@
                     <a href="{{ route('contact') }}" class="px-3 py-2 rounded-lg text-white/90 hover:bg-white/10 transition">Contact</a>
                     <hr class="border-white/10 my-2">
                     <a href="/guest/login" class="px-3 py-2 rounded-lg text-white/90 hover:bg-white/10 transition">Sign In</a>
-                    <a href="/guest/register" class="px-3 py-2 rounded-lg bg-white text-brand-700 text-center font-medium hover:bg-white/90 transition">List with Us</a>
+                    <a href="/guest/register" class="px-3 py-2 rounded-lg bg-white text-brand-700 text-center font-medium hover:bg-white/90 transition">Sign Up</a>
                 </nav>
             </div>
         </div>

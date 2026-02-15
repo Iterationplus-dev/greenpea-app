@@ -10,6 +10,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use App\Filament\Forms\Components\CloudinaryUpload;
+use Illuminate\Support\HtmlString;
+use League\Uri\Contracts\HostInterface;
 
 class ApartmentForm
 {
@@ -83,7 +85,18 @@ class ApartmentForm
                             ->disk('public')              // temp storage
                             ->directory('apartments/tmp') // temp folder
                             ->preserveFilenames()
-                            ->reorderable(),
+                            ->reorderable()
+                            ->maxSize(500) // 500 KB
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('1024:700')
+                            ->imageResizeTargetWidth(1024)
+                            ->imageResizeTargetHeight(700)
+                            ->rules(['dimensions:width=1024,height=700'])
+                            ->helperText(new HtmlString('<span class="text-sm text-red-500">Upload images of the apartment. You can upload multiple images and reorder them as needed. Each image must be exactly 1024 x 700px and not exceed 500kb. Only jpg, jpeg, png formats are allowed.</span>'))
+
+                            ->extraAttributes(['class' => 'text-danger'])
+                            ->columnSpanFull()
+                            ->hint('After uploading, the images will be processed and moved to permanent storage. Please wait a moment before trying to view them.'),
 
                         Toggle::make('is_available')
                             ->label('Apartment Status')

@@ -30,6 +30,17 @@ class CreateProperty extends CreateRecord
     {
         $data['slug'] = Str::slug($data['name']);
 
+        // Ensure owner_id is set for super admins
+        // Remove this block if you want to allow super admins to select the owner from the form instead of defaulting to the first property owner.
+        if (auth()->user()->isSuper()) {
+            $firstOwner = \App\Models\User::query()
+                ->where('role', \App\Enums\UserRole::PROPERTY_OWNER->value)
+                ->first();
+            if ($firstOwner) {
+                $data['owner_id'] = $firstOwner->id;
+            }
+        }
+
         return $data;
     }
 

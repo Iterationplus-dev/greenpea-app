@@ -7,7 +7,6 @@ use App\Models\User;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\RichEditor;
@@ -22,21 +21,25 @@ class PropertyForm
                     ->description('Basic details about the property')
                     ->columns(2)
                     ->schema([
-
-
                         Select::make('owner_id')
-                            ->label('Select Owner')
-                            ->options(
-                                User::query()
+                            // ->label('Select Owner')
+                            ->label('Property Owner')
+                            ->hint('This field is set at default to GreenPea Apartments as owner of the property. Only visible to super admins.')
+                            ->options(function () {
+                                $firstOwner = User::query()
                                     ->where('role', UserRole::PROPERTY_OWNER->value)
-                                    ->pluck('name', 'id')
-                            )
-                            ->searchable()
-                            ->preload()
-                            ->reactive()
+                                    ->first();
+                                return $firstOwner ? [$firstOwner->id => $firstOwner->name] : [];
+                            })
+                            ->default(function () {
+                                $firstOwner = User::query()
+                                    ->where('role', UserRole::PROPERTY_OWNER->value)
+                                    ->first();
+                                return $firstOwner ? $firstOwner->id : null;
+                            })
+                            ->disabled()
                             ->visible(fn() => auth()->user()->isSuper())
-                            ->columnSpanFull()
-                            ->placeholder('Select property owner from list...'),
+                            ->columnSpanFull(),
 
                         TextInput::make('name')
                             ->label('Property Name')
@@ -49,6 +52,7 @@ class PropertyForm
                         Select::make('city')
                             ->options([
                                 'Abuja' => 'Abuja',
+                                'Enugu' => 'Enugu',
                                 'Lagos' => 'Lagos',
                                 'Port Harcourt' => 'Port Harcourt',
                             ])
