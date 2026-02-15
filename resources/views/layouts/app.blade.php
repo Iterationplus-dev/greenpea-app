@@ -164,8 +164,8 @@
                     <ul class="space-y-2 text-sm text-white/50">
                         <li><a href="{{ route('faqs') }}" class="hover:text-white transition">FAQs</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-white transition">Contact Us</a></li>
-                        <li>help@greenpea.ng</li>
-                        <li>+234 800 000 0000</li>
+                        <li>help@greenpeaapartments.com</li>
+                        <li>+2348034033211</li>
                     </ul>
                 </div>
             </div>
@@ -179,9 +179,9 @@
         </div>
     </footer>
 
-    <!-- WhatsApp Chat Button -->
+    <!-- WhatsApp Chat Button +2348034033211 -->
     <a
-        href="https://wa.me/23480?text=Hello%20GreenPea%2C%20I%20need%20help%20with%20booking%20an%20apartment."
+        href="https://wa.me/2348034033211?text=Hello%20GreenPea%2C%20I%20need%20help%20with%20booking%20an%20apartment."
         target="_blank"
         rel="noopener noreferrer"
         class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe57] text-white pl-4 pr-5 py-3 rounded-full shadow-lg hover:shadow-xl transition group"
