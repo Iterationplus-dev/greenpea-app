@@ -43,7 +43,8 @@ jobs:
           php artisan down --refresh=15 || true
 
           echo "Pulling latest code..."
-          git pull origin main
+          git fetch origin
+          git reset --hard origin/main
 
           echo "Installing PHP dependencies..."
           composer install --no-dev --no-interaction --optimize-autoloader
@@ -56,9 +57,15 @@ jobs:
           php artisan migrate --no-interaction --force
 
           echo "Clearing and rebuilding caches..."
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
           php artisan optimize:clear
           php artisan optimize
           php artisan filament:optimize
+
+          echo "Revive server..."
+          php artisan up
 
           echo "Restarting queues..."
           php artisan queue:restart
