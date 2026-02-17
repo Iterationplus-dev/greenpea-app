@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Apartment extends Model
@@ -17,7 +18,7 @@ class Apartment extends Model
         'name',
         'slug',
         'description',
-        'monthly_price',
+        'daily_price',
         'unit_number',
         'floor',
         'bedrooms',
@@ -60,7 +61,7 @@ class Apartment extends Model
     }
 
     protected $casts = [
-        'monthly_price' => 'decimal:2',
+        'daily_price' => 'decimal:2',
         'is_available' => 'boolean',
     ];
 
@@ -91,6 +92,11 @@ class Apartment extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function amenities(): BelongsToMany
+    {
+        return $this->belongsToMany(Amenity::class, 'apartment_amenity');
     }
 
     public function scopeAvailableBetween($query, $start, $end)

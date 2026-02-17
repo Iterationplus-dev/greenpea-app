@@ -2,12 +2,13 @@
 
 namespace App\Filament\Widgets\Finance;
 
+use App\Enums\PaymentStatus;
+use App\Models\Apartment;
 use App\Models\Booking;
 use App\Models\BookingPayment;
+use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class FinanceStats extends StatsOverviewWidget
 {
@@ -20,9 +21,13 @@ class FinanceStats extends StatsOverviewWidget
     {
         // Totals
         $totalRevenue = BookingPayment::where('status', 'success')->sum('amount');
+        $availableApartments = Apartment::where('is_available', 1)->count();
         $platformFees = BookingPayment::where('status', 'success')->sum('platform_fee');
-        $ownerEarnings = BookingPayment::where('status', 'success')
-            ->sum(DB::raw('amount - platform_fee'));
+        $totalBookingAmounts = Booking::where('status', '!=', 'cancelled')->sum('amount');
+        $totalPaid = BookingPayment::query()
+            ->whereIn('status', [PaymentStatus::SUCCESS->value, PaymentStatus::PAID->value])
+            ->sum('amount');
+        $totalDebt = max($totalBookingAmounts - $totalPaid, 0);
         $totalBookings = Booking::where('status', '!=', 'cancelled')->count();
 
         // Last 7 days trend data
@@ -40,37 +45,47 @@ class FinanceStats extends StatsOverviewWidget
             ->toArray();
 
         return [
-            Stat::make('Total Revenue', '₦' . number_format($totalRevenue, 2))
+            Stat::make('Total Revenue', '₦'.number_format($totalRevenue, 2))
                 ->description('All successful payments')
-                ->descriptionIcon('heroicon-m-banknotes')
+                ->descriptionIcon('heroicon-m-banknotes', IconPosition::Before)
                 ->color('success')
                 // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.booking-payments.index'))
                 ->chart($revenueTrend),
 
-            Stat::make('Platform Fees', '₦' . number_format($platformFees, 2))
-                ->description('Platform earnings')
-                ->descriptionIcon('heroicon-m-currency-dollar')
+            Stat::make("Debt's", '₦'.number_format($totalDebt, 2))
+                ->description('Money owed '.config('app.name'))
+                ->descriptionIcon('heroicon-m-arrow-path-rounded-square', IconPosition::Before)
+                ->color('success')
+               // ->icon('heroicon-o-users')
+               // ->url(route('filament.app.pages.owner-payouts'))
+                ->chart($revenueTrend),
+
+            Stat::make('Apartments', value: number_format($availableApartments, 0))
+                ->description('Total apartments listed available')
+                ->descriptionIcon('heroicon-m-home-modern', IconPosition::Before)
                 ->color('info')
                 // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.invoices.index'))
                 ->chart($revenueTrend),
 
+            // return for multi-users
+            // Stat::make('Platform Fees', '₦' . number_format($platformFees, 2))
+            //     ->description('Platform earnings')
+            //     ->descriptionIcon('heroicon-m-currency-dollar')
+            //     ->color('info')
+            //     // ->icon('heroicon-o-users')
+            //     // ->url(route('filament.app.resources.invoices.index'))
+            //     ->chart($revenueTrend),
+
             Stat::make('Total Bookings', number_format($totalBookings))
                 ->description('All confirmed bookings')
-                ->descriptionIcon('heroicon-m-calendar-days')
+                ->descriptionIcon('heroicon-m-calendar-days', IconPosition::Before)
                 ->color('primary')
                 // ->icon('heroicon-o-users')
                 // ->url(route('filament.app.resources.bookings.index'))
                 ->chart($bookingsTrend),
 
-            Stat::make('Owner Earnings', '₦' . number_format($ownerEarnings, 2))
-                ->description('Money owed to property owners')
-                ->descriptionIcon('heroicon-m-building-storefront')
-                ->color('success')
-                // ->icon('heroicon-o-users')
-                // ->url(route('filament.app.pages.owner-payouts'))
-                ->chart($revenueTrend),
         ];
     }
 }

@@ -56,6 +56,14 @@ return [
 
     'admin_url' => env('ADMIN_URL'),
 
+    // WhatsApp configuration
+    'whatsapp' => [
+        'enabled' => env('WHATSAPP_ENABLED', false),
+        'number' => env('WHATSAPP_NUMBER', '2348034033211'),
+        'endpoint' => env('WHATSAPP_ENDPOINT'),
+        'token' => env('WHATSAPP_TOKEN'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

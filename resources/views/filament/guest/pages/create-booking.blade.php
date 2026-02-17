@@ -85,7 +85,7 @@
                         {{-- Price Breakdown --}}
                         <div class="border-t border-gray-100 pt-4 space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span class="text-gray-500">&#8358;{{ number_format($apartment->monthly_price) }} x {{ $months }} {{ Str::plural('month', $months) }}</span>
+                                <span class="text-gray-500">&#8358;{{ number_format($apartment->daily_price) }} x {{ $days }} {{ Str::plural('night', $days) }}</span>
                                 <span class="font-medium text-gray-900">&#8358;{{ number_format($totalAmount) }}</span>
                             </div>
                             <div class="flex justify-between border-t border-gray-100 pt-2">

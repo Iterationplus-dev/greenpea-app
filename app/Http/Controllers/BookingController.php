@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
 use App\Models\Apartment;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
     public function show(Apartment $apartment)
     {
+        $apartment->load(['images', 'property', 'amenities']);
+
         return view('booking.show', compact('apartment'));
     }
 
@@ -27,7 +29,6 @@ class BookingController extends Controller
 
         return redirect()->route('booking.thankyou');
     }
-
 
     public function pay(Booking $booking)
     {

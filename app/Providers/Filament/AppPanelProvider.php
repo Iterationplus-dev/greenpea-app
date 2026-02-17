@@ -50,7 +50,7 @@ class AppPanelProvider extends PanelProvider
                 \App\Filament\Pages\Dashboard::class,
                 \App\Filament\Pages\WalkInBookingWizard::class,
             ])
-            ->sidebarWidth('16rem')
+            ->sidebarWidth('18rem')
             ->sidebarCollapsibleOnDesktop(false)
             ->collapsedSidebarWidth('9rem')
             ->topNavigation(false)

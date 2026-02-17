@@ -15,7 +15,7 @@ class HomeController extends Controller
         //     ->get()
         //     ->groupBy(fn($a) => $a->property->city);
 
-        $apartments = Apartment::with(['featuredImage', 'images', 'property'])
+        $apartments = Apartment::with(['featuredImage', 'images', 'property', 'amenities'])
             ->where('is_available', true)
             ->get()
             ->groupBy(fn ($a) => $a->property->city);

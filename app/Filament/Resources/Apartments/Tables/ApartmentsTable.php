@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Apartments\Tables;
 
-use Filament\Tables\Table;
-use Filament\Actions\EditAction;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class ApartmentsTable
@@ -21,7 +21,7 @@ class ApartmentsTable
         return $table
             ->striped()
             ->defaultSort('name', 'asc')
-            ->deferLoading(fn() => ! request()->has('record'))
+            ->deferLoading(fn () => ! request()->has('record'))
             ->modifyQueryUsing(function (Builder $query) {
                 if ($recordId = request()->query('record')) {
                     $query->where('id', $recordId);
@@ -50,11 +50,11 @@ class ApartmentsTable
                     ->label('City')
                     ->sortable(),
 
-                TextColumn::make('monthly_price')
+                TextColumn::make('daily_price')
+                    ->label('Daily Price')
                     ->money('NGN')
                     ->sortable()
-                    ->alignRight()
-                    ->extraAttributes(['class' => 'custom-padding-right-column']),
+                    ->alignRight(),
 
                 ToggleColumn::make('is_available')
                     ->label('Available')
@@ -66,8 +66,7 @@ class ApartmentsTable
                     ->sortable(),
             ])
             ->recordClasses(
-                fn($record) =>
-                request('record') == $record->id
+                fn ($record) => request('record') == $record->id
                     ? 'highlighted-row'
                     : null
             )
@@ -91,13 +90,13 @@ class ApartmentsTable
                         ->modalHeading('Edit Apartment')
                         ->color('info'),
                 ])
-                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->icon('heroicon-o-ellipsis-vertical'),
             ])
 
             ->toolbarActions([
                 BulkActionGroup::make([
                     // DeleteBulkAction::make()
-                        // ->chunkSelectedRecords(10),
+                    // ->chunkSelectedRecords(10),
                 ]),
             ]);
     }

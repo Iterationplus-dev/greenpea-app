@@ -27,8 +27,8 @@
                     </div>
                     <h3 class="font-semibold text-navy mb-1">Phone</h3>
                     <p class="text-sm text-gray-500">Mon - Sat, 8am - 6pm WAT</p>
-                    <a href="tel:+2348000000000" class="text-sm text-brand-600 font-medium mt-2 inline-block hover:underline">
-                        +234 800 000 0000
+                    <a href="tel:+{{ setting('contacts')['phone'] }}" class="text-sm text-brand-600 font-medium mt-2 inline-block hover:underline">
+                        {{ setting('contacts')['phone'] }}
                     </a>
                 </div>
 
@@ -41,8 +41,8 @@
                     </div>
                     <h3 class="font-semibold text-navy mb-1">Email</h3>
                     <p class="text-sm text-gray-500">We reply within 24 hours</p>
-                    <a href="mailto:help@greenpea.ng" class="text-sm text-brand-600 font-medium mt-2 inline-block hover:underline">
-                        help@greenpea.ng
+                    <a href="mailto:{{ setting('contacts')['email'] }}" class="text-sm text-brand-600 font-medium mt-2 inline-block hover:underline">
+                        {{ setting('contacts')['email'] }}
                     </a>
                 </div>
 
@@ -55,7 +55,11 @@
                     </div>
                     <h3 class="font-semibold text-navy mb-1">WhatsApp</h3>
                     <p class="text-sm text-gray-500">Chat with us instantly</p>
-                    <a href="https://wa.me/23480?text=Hello%20GreenPea%2C%20I%20need%20help%20with%20booking%20an%20apartment."
+                    @php
+                        $__wa_number = setting('contacts')['mobile'];
+                        $__wa_message = urlencode("Hello " . config('app.name') . ", I need help with booking an apartment.");
+                    @endphp
+                    <a href="https://wa.me/{{ $__wa_number }}?text={{ $__wa_message }}"
                        target="_blank"
                        rel="noopener noreferrer"
                        class="text-sm text-[#25D366] font-medium mt-2 inline-block hover:underline">

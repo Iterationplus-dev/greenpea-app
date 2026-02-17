@@ -102,7 +102,7 @@
                     <div class="mt-3 text-center">
                         <span class="inline-flex items-center gap-1 text-sm text-gray-500">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            {{ $months }} {{ Str::plural('month', $months) }} stay
+                            {{ $days }} {{ Str::plural('night', $days) }} stay
                         </span>
                     </div>
                 </div>
@@ -115,12 +115,12 @@
 
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between">
-                            <span class="text-gray-500">Monthly rent</span>
-                            <span class="font-medium text-gray-900">&#8358;{{ number_format($apartment->monthly_price) }}</span>
+                            <span class="text-gray-500">Nightly rate</span>
+                            <span class="font-medium text-gray-900">&#8358;{{ number_format($apartment->daily_price) }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-500">Duration</span>
-                            <span class="font-medium text-gray-900">{{ $months }} {{ Str::plural('month', $months) }}</span>
+                            <span class="font-medium text-gray-900">{{ $days }} {{ Str::plural('night', $days) }}</span>
                         </div>
                         <div class="border-t border-gray-100 pt-3 flex justify-between">
                             <span class="font-semibold text-gray-900">Total</span>

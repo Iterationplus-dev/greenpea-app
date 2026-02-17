@@ -2,22 +2,20 @@
 
 namespace App\Filament\Resources\Bookings\Schemas;
 
-use Carbon\Carbon;
-use App\Models\User;
+use App\Enums\PaymentMethod;
 use App\Models\Apartment;
 use App\Models\Booking;
-use App\Enums\PaymentMethod;
-
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Models\User;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class BookingForm
 {
@@ -52,7 +50,7 @@ class BookingForm
                             ->helperText('Activate guest account upon creation'),
                     ]),
                 ])
-                ->visible(fn($get) => ! $get('user_id')),
+                ->visible(fn ($get) => ! $get('user_id')),
 
             Section::make('Booking Details')
                 ->schema([
@@ -73,7 +71,7 @@ class BookingForm
                             ->label('Total Amount')
                             ->prefix(setting('currency'))
                             ->disabled()
-                            ->extraAttributes(['class' => 'font-bold text-lg text-danger-700'])
+                            ->extraAttributes(['class' => 'font-bold text-lg text-danger-700']),
                     ]),
 
                     Grid::make(2)->schema([
@@ -86,11 +84,13 @@ class BookingForm
                             ->native(false)
                             ->placeholder('Select check-in date')
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                if (! $state) return;
+                                if (! $state) {
+                                    return;
+                                }
 
                                 $set(
                                     'end_date',
-                                    Carbon::parse($state)->addMonth()->toDateString()
+                                    Carbon::parse($state)->addDay()->toDateString()
                                 );
 
                                 self::calculatePrice($get, $set);
@@ -109,11 +109,11 @@ class BookingForm
 
                     Textarea::make('conflict_details')
                         ->disabled()
-                        ->visible(fn($get) => ! empty($get('conflict_details'))),
+                        ->visible(fn ($get) => ! empty($get('conflict_details'))),
 
                     Textarea::make('occupied_calendar')
                         ->disabled()
-                        ->visible(fn($get) => ! empty($get('occupied_calendar'))),
+                        ->visible(fn ($get) => ! empty($get('occupied_calendar'))),
                 ]),
 
             Section::make('Walk-In Payment')
@@ -135,7 +135,9 @@ class BookingForm
                         ->prefix(setting('currency'))
                         ->live(onBlur: true)
                         ->afterStateUpdated(function ($state, callable $set) {
-                            if (! $state) return;
+                            if (! $state) {
+                                return;
+                            }
 
                             // Clean existing commas
                             $clean = str_replace(',', '', $state);
@@ -147,7 +149,6 @@ class BookingForm
                             // Always remove commas before saving
                             return $state ? str_replace(',', '', $state) : null;
                         }),
-
 
                     RichEditor::make('admin_note')
                         ->toolbarButtons([
@@ -190,8 +191,7 @@ class BookingForm
             ->orderBy('start_date')
             ->get(['reference', 'start_date', 'end_date'])
             ->map(
-                fn($b) =>
-                "{$b->reference}: {$b->start_date} → {$b->end_date}"
+                fn ($b) => "{$b->reference}: {$b->start_date} → {$b->end_date}"
             )
             ->toArray();
     }
@@ -204,6 +204,7 @@ class BookingForm
 
         if (! $apartmentId || ! $start || ! $end) {
             $set('calculated_amount', null);
+
             return;
         }
 
@@ -211,16 +212,16 @@ class BookingForm
 
         if (! $apartment) {
             $set('calculated_amount', null);
+
             return;
         }
 
         $startDate = Carbon::parse($start);
         $endDate = Carbon::parse($end);
 
-        // Calculate months (round up partial months)
-        $months = max(1, $startDate->diffInMonths($endDate) + 1);
+        $days = max(1, $startDate->diffInDays($endDate));
 
-        $total = number_format($months * $apartment->monthly_price, 2);
+        $total = number_format($days * $apartment->daily_price, 2);
 
         $set('calculated_amount', $total);
     }

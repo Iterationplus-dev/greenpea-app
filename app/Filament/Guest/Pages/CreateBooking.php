@@ -28,7 +28,7 @@ class CreateBooking extends Page
 
     public ?Apartment $apartment = null;
 
-    public int $months = 1;
+    public int $days = 1;
 
     public float $totalAmount = 0;
 
@@ -47,12 +47,9 @@ class CreateBooking extends Page
         $start = Carbon::parse($this->intent['start_date']);
         $end = Carbon::parse($this->intent['end_date']);
 
-        $this->months = max(
-            ($end->year - $start->year) * 12 + ($end->month - $start->month),
-            1
-        );
+        $this->days = max($start->diffInDays($end), 1);
 
-        $this->totalAmount = $this->months * $this->apartment->monthly_price;
+        $this->totalAmount = $this->days * $this->apartment->daily_price;
 
         $this->data = [
             'guest_name' => Auth::user()->name,
@@ -74,6 +71,7 @@ class CreateBooking extends Page
                     TextInput::make('guest_email')
                         ->label('Email address')
                         ->email()
+                        ->readonly()
                         ->required(),
 
                     DatePicker::make('start_date')
@@ -95,12 +93,9 @@ class CreateBooking extends Page
         $start = Carbon::parse($this->intent['start_date']);
         $end = Carbon::parse($this->intent['end_date']);
 
-        $months = max(
-            ($end->year - $start->year) * 12 + ($end->month - $start->month),
-            1
-        );
+        $days = max($start->diffInDays($end), 1);
 
-        $amount = $months * $this->apartment->monthly_price;
+        $amount = $days * $this->apartment->daily_price;
 
         try {
             app(BookingService::class)->create([

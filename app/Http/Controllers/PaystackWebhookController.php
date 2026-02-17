@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookingPayment;
 use App\Enums\BookingStatus;
+use App\Events\PaymentReceived;
+use App\Models\BookingPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -51,7 +52,7 @@ class PaystackWebhookController extends Controller
             ]);
 
             // Fire payment received event
-            event(new \App\Events\PaymentReceived($payment));
+            event(new PaymentReceived($payment));
         });
 
         return response('OK', 200);

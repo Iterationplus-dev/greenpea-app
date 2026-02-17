@@ -2,7 +2,7 @@
    FONTS & FILAMENT BASE
 ─────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Buda:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
@@ -11,7 +11,7 @@
 @source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Buda', ui-sans-serif, system-ui;
+    --font-sans: 'Lato', ui-sans-serif, system-ui;
 }
 
 
@@ -26,7 +26,7 @@
     body,
     .fi-body,
     .fi {
-        font-family: 'Buda', system-ui, sans-serif !important;
+        font-family: 'Lato', system-ui, sans-serif !important;
     }
 
 
@@ -45,6 +45,13 @@
         line-height: 1rem;
         font-weight: 700;
         color: var(--gray-900);
+        background-color: rgba(0, 0, 0, 0.04);
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+
+    .dark .fi-sidebar-group-label {
+        background-color: rgba(255, 255, 255, 0.06);
     }
 
     .fi-sidebar-item-label {
@@ -110,6 +117,7 @@
         font-size: 0.70rem !important;
         padding-top: 8px !important;
         padding-bottom: 8px !important;
+        padding-inline: 12px !important;
         background-color: #e5fdf4 !important;
         line-height: 0.9rem !important;
     }
@@ -119,17 +127,18 @@
         line-height: 0.8rem !important;
         padding-top: 7px !important;
         padding-bottom: 7px !important;
+        padding-inline: 12px !important;
         min-height: 22px !important;
     }
 
     .fi-ta-text:not(.fi-inline) {
-        padding-inline: 2px !important;
+        padding-inline: 0px !important;
         padding-block: 1px !important;
     }
 
     .fi-ta-text-item {
         margin: 0 !important;
-        padding: 2px 4px !important;
+        padding: 2px 0px !important;
         line-height: 1 !important;
     }
 
@@ -146,6 +155,11 @@
     .fi-icon-btn {
         padding: 0px !important;
         margin: 0px !important;
+    }
+
+    .fi-ta-actions-header-cell,
+    .fi-ta-header-cell.fi-align-end {
+        text-align: center !important;
     }
 
     .fi-ta-row {

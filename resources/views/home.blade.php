@@ -465,13 +465,30 @@
                                     @endif
                                 </div>
 
+                                {{-- Amenity Badges --}}
+                                @if($apartment->amenities->isNotEmpty())
+                                    <div class="flex items-center gap-2 flex-wrap text-xs text-gray-500 mb-3">
+                                        @foreach($apartment->amenities->take(3) as $amenity)
+                                            <span class="flex items-center gap-1 bg-gray-50 rounded-full px-2 py-0.5 border border-gray-100">
+                                                @if($amenity->icon)
+                                                    <x-dynamic-component :component="$amenity->icon" class="w-3 h-3 text-brand-600" />
+                                                @endif
+                                                {{ $amenity->name }}
+                                            </span>
+                                        @endforeach
+                                        @if($apartment->amenities->count() > 3)
+                                            <span class="text-gray-400">+{{ $apartment->amenities->count() - 3 }} more</span>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 {{-- Price + CTA --}}
                                 <div class="flex items-end justify-between pt-3 border-t border-gray-50">
                                     <div>
                                         <span class="text-lg font-bold text-brand-600">
-                                            &#8358;{{ number_format($apartment->monthly_price) }}
+                                            &#8358;{{ number_format($apartment->daily_price) }}
                                         </span>
-                                        <span class="text-xs text-gray-400"> / month</span>
+                                        <span class="text-xs text-gray-400"> / night</span>
                                     </div>
                                     <span class="text-xs font-medium text-brand-600 group-hover:underline">
                                         View &rarr;

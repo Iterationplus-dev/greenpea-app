@@ -2,16 +2,15 @@
 
 namespace App\Filament\Resources\Apartments\Schemas;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use App\Filament\Forms\Components\CloudinaryUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
-use League\Uri\Contracts\HostInterface;
 
 class ApartmentForm
 {
@@ -48,7 +47,8 @@ class ApartmentForm
                             ->default('0')
                             ->columnSpanFull(),
 
-                        TextInput::make('monthly_price')
+                        TextInput::make('daily_price')
+                            ->label('Daily Price')
                             ->numeric()
                             ->required()
                             ->prefix('₦')
@@ -92,11 +92,11 @@ class ApartmentForm
                             ->imageResizeTargetWidth(1024)
                             ->imageResizeTargetHeight(700)
                             ->rules(['dimensions:width=1024,height=700'])
-                            ->helperText(new HtmlString('<span class="text-sm text-red-500">Upload images of the apartment. You can upload multiple images and reorder them as needed. Each image must be exactly 1024 x 700px and not exceed 500kb. Only jpg, jpeg, png formats are allowed.</span>'))
+                            ->helperText(new HtmlString('<span class="text-sm text-red-500">Upload images of the apartment. You can upload multiple images and reorder them as needed. Each image must be exactly 1024 x 700px and not exceed 500kb.</span>'))
 
                             ->extraAttributes(['class' => 'text-danger'])
                             ->columnSpanFull()
-                            ->hint('After uploading, the images will be processed and moved to permanent storage. Please wait a moment before trying to view them.'),
+                            ->hint('Allow formats include .jpg, .jpeg, & .png.'),
 
                         Toggle::make('is_available')
                             ->label('Apartment Status')

@@ -52,7 +52,7 @@
                         {{ $index !== 0 ? 'style=display:none' : '' }}
                     >
                 @endforeach
-
+{{-- check --}}
                 {{-- Navigation Arrows --}}
                 @if($allImages->count() > 1)
                     <button @click="prev()" class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow hover:bg-white transition">
@@ -169,8 +169,30 @@
                 <div class="mb-8">
                     <h2 class="text-lg font-semibold text-navy mb-3">About this apartment</h2>
                     <p class="text-gray-600 leading-relaxed">
-                        {{ $apartment->description }}
+                        {!! $apartment->description !!}
                     </p>
+                </div>
+            @endif
+
+            {{-- Amenities --}}
+            @if($apartment->amenities->count())
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold text-navy mb-4">What's included</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        @foreach($apartment->amenities as $amenity)
+                            <div class="flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100">
+                                @if($amenity->icon)
+                                    <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
+                                        <x-dynamic-component
+                                            :component="$amenity->icon"
+                                            class="w-4 h-4 text-brand-600"
+                                        />
+                                    </div>
+                                @endif
+                                <span class="text-sm font-medium text-gray-700">{{ $amenity->name }}</span>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             @endif
         </div>
@@ -184,8 +206,8 @@
                     end: '',
                     startISO: '',
                     endISO: '',
-                    price: {{ (int) $apartment->monthly_price }},
-                    total: {{ (int) $apartment->monthly_price }},
+                    price: {{ (int) $apartment->daily_price }},
+                    total: {{ (int) $apartment->daily_price }},
                     fpIn: null,
                     fpOut: null,
                     calc() {
@@ -195,10 +217,8 @@
                         }
                         let s = new Date(this.startISO)
                         let e = new Date(this.endISO)
-                        let months =
-                            (e.getFullYear() - s.getFullYear()) * 12 +
-                            (e.getMonth() - s.getMonth())
-                        this.total = Math.max(months, 1) * this.price
+                        let days = Math.round((e - s) / (1000 * 60 * 60 * 24))
+                        this.total = Math.max(days, 1) * this.price
                     },
                     initDates() {
                         this.fpIn = window.flatpickr(this.$refs.startDate, {
@@ -235,9 +255,9 @@
                 {{-- Price --}}
                 <div class="mb-5">
                     <span class="text-2xl font-bold text-navy">
-                        &#8358;{{ number_format($apartment->monthly_price) }}
+                        &#8358;{{ number_format($apartment->daily_price) }}
                     </span>
-                    <span class="text-sm text-gray-400"> / month</span>
+                    <span class="text-sm text-gray-400"> / night</span>
                 </div>
 
                 <form

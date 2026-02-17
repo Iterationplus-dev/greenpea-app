@@ -2,26 +2,22 @@
 
 namespace App\Filament\Resources\Properties\RelationManagers;
 
-use Filament\Tables\Table;
-use Forms\Components\TextInput;
-use Filament\Actions\EditAction;
+use App\Filament\Resources\Properties\PropertyResource;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Toggle;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\EditAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use App\Filament\Resources\Properties\PropertyResource;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Table;
 
 class ApartmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'apartments';
+
     protected static ?string $title = 'Apartments';
 
     protected static ?string $relatedResource = PropertyResource::class;
-
-
 
     public function table(Table $table): Table
     {
@@ -30,8 +26,8 @@ class ApartmentsRelationManager extends RelationManager
                 TextColumn::make('name')
                     ->label('Apartment Name'),
 
-                TextColumn::make('monthly_price')
-                    ->label('Monthly Price')
+                TextColumn::make('daily_price')
+                    ->label('Daily Price')
                     ->money(setting('currency')),
 
                 ToggleColumn::make('is_available')
@@ -43,7 +39,7 @@ class ApartmentsRelationManager extends RelationManager
                     ->width('5')
                     ->alignCenter()
                     ->sortable()
-                    ->visibleFrom('md')
+                    ->visibleFrom('md'),
             ])
             ->headerActions([
                 CreateAction::make(),
