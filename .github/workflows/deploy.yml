@@ -25,7 +25,7 @@ jobs:
         USER: ${{ secrets.USER }}
         KEY: ${{ secrets.KEY }}
 
-    - name: Deploying to server
+    - name: Deploying to server, please wait...
       uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.HOST }}
